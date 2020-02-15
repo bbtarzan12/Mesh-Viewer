@@ -4,9 +4,11 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <imgui.h>
+#include <glm/gtx/quaternion.hpp>
 
 Mesh::Mesh(const std::string& filePath)
-	: model(1.0f)
+	: position(0, 0, 0), rotation(1, 0, 0, 0), scale(1, 1, 1)
 {
 	glGenVertexArrays(1, &vertexArray);
 	glGenBuffers(1, &vertexPosition);
@@ -31,10 +33,11 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &indexArray);
 }
 
-void Mesh::Draw(const glm::mat4& view, const glm::mat4& projection)
+void Mesh::Draw(const glm::mat4& view, const glm::mat4& projection) const
 {
 	assert(material);
-	model = glm::rotate(model, (float)glfwGetTime() * 0.0001f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+
+	glm::mat4 model = glm::translate(position) * glm::toMat4(rotation) * glm::scale(scale);
 
 	material->Draw(model, view, projection);
 
@@ -68,9 +71,39 @@ void Mesh::Draw(const glm::mat4& view, const glm::mat4& projection)
 	glUseProgram(0);
 }
 
+void Mesh::DrawUI()
+{
+	ImGui::Text("Position");
+	ImGui::SameLine();
+	if (ImGui::DragFloat3("##Position", &position[0], 0.1f))
+	{
+
+	}
+
+	glm::vec3 euler = glm::degrees(glm::eulerAngles(rotation));
+	ImGui::Text("Rotation");
+	ImGui::SameLine();
+	if (ImGui::DragFloat3("##Rotation", &euler[0], 0.1f))
+	{
+		rotation = glm::quat(glm::radians(euler));
+	}
+
+	ImGui::Text("Scale");
+	ImGui::SameLine();
+	if (ImGui::DragFloat3("##Scale", &scale[0], 0.1f))
+	{
+		
+	}
+}
+
 void Mesh::SetMaterial(const std::shared_ptr<Material> newMaterial)
 {
 	material = newMaterial;
+}
+
+const std::string& Mesh::GetName() const
+{
+	return name;
 }
 
 std::shared_ptr<Material> Mesh::GetMaterial()
@@ -80,7 +113,7 @@ std::shared_ptr<Material> Mesh::GetMaterial()
 
 void Mesh::Load(const std::string& filePath)
 {
-	MeshLoader::Load(filePath, vertices, normals, uvs, tangents, indices);
+	MeshLoader::Load(filePath, name, vertices, normals, uvs, tangents, indices);
 
 	glBindVertexArray(vertexArray);
 	{

@@ -7,10 +7,7 @@ public:
 	Phong();
 
 	virtual void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const override;
-
-	void SetDiffuseTexture(const GLuint texture);
-	void SetNormalTexture(const GLuint texture);
-	void SetSpecularTexture(const GLuint texture);
+	virtual void DrawUI() override;
 
 private:
 	GLuint modelMatrix, viewMatrix, projectionMatrix;

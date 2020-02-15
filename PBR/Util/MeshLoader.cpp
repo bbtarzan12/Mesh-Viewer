@@ -7,7 +7,7 @@
 #include <string>
 #include <iostream>
 
-void MeshLoader::Load(const std::string& filePath, std::vector<glm::vec3>& vertices, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& uvs, std::vector<glm::vec3>& tangents, std::vector<unsigned int>& indices)
+void MeshLoader::Load(const std::string& filePath, std::string& name, std::vector<glm::vec3>& vertices, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& uvs, std::vector<glm::vec3>& tangents, std::vector<unsigned int>& indices)
 {
 	Assimp::Importer importer;
 
@@ -18,6 +18,8 @@ void MeshLoader::Load(const std::string& filePath, std::vector<glm::vec3>& verti
 	assert(scene->mRootNode);
 
 	const aiMesh* mesh = scene->mMeshes[0];
+
+	name = mesh->mName.C_Str();
 
 	int numVertices = mesh->mNumVertices;
 

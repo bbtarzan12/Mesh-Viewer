@@ -70,6 +70,15 @@
     <ClCompile Include="Managers\GLFWManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imgui_custom.cpp">
+      <Filter>Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Texture.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\ImGuiFileDialog.cpp">
+      <Filter>Libraries\Imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_vert.glsl">
@@ -112,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="Managers\MaterialManager.h">
       <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Texture.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

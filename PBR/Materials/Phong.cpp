@@ -17,15 +17,15 @@ void Phong::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4&
 	Material::Draw(model, view, projection);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, diffuseTexture);
+	glBindTexture(GL_TEXTURE_2D, GetTextureID("diffuse"));
 	glUniform1i(diffuseID, 0);
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, normalTexture);
+	glBindTexture(GL_TEXTURE_2D, GetTextureID("normal"));
 	glUniform1i(normalID, 1);
 
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, specularTexture);
+	glBindTexture(GL_TEXTURE_2D, GetTextureID("specular"));
 	glUniform1i(specularID, 2);
 
 	glUniformMatrix4fv(modelMatrix, 1, GL_FALSE, &model[0][0]);
@@ -33,17 +33,9 @@ void Phong::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4&
 	glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, &projection[0][0]);
 }
 
-void Phong::SetDiffuseTexture(const GLuint texture)
+void Phong::DrawUI()
 {
-	diffuseTexture = texture;
-}
-
-void Phong::SetNormalTexture(const GLuint texture)
-{
-	normalTexture = texture;
-}
-
-void Phong::SetSpecularTexture(const GLuint texture)
-{
-	specularTexture = texture;
+	DrawTexturePannel("diffuse");
+	DrawTexturePannel("normal");
+	DrawTexturePannel("specular");
 }

@@ -136,7 +136,10 @@
     <ClCompile Include="Core\Material.cpp" />
     <ClCompile Include="Core\Mesh.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />
+    <ClCompile Include="Core\Texture.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui.cpp" />
+    <ClCompile Include="Libraries\Imgui\ImGuiFileDialog.cpp" />
+    <ClCompile Include="Libraries\Imgui\imgui_custom.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_demo.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_draw.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_impl_glfw.cpp" />
@@ -159,6 +162,7 @@
     <ClInclude Include="Core\Mesh.h" />
     <ClInclude Include="Core\Renderer.h" />
     <ClInclude Include="Core\SingletonManager.h" />
+    <ClInclude Include="Core\Texture.h" />
     <ClInclude Include="Managers\GLFWManager.h" />
     <ClInclude Include="Managers\MaterialManager.h" />
     <ClInclude Include="Materials\Phong.h" />
