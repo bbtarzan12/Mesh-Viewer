@@ -7,15 +7,16 @@
 class Texture
 {
 public:
-	static std::shared_ptr<Texture> CreateTexture(const std::string& filePath);
-
 	Texture(const std::string& filePath);
-	~Texture();
+	virtual ~Texture();
 
 	const GLuint& GetID() const;
 	const glm::ivec2& GetSize() const;
 
-private:
+protected:
+	Texture() = default;
+
+protected:
 	GLuint id;
 	glm::ivec2 size;
 };

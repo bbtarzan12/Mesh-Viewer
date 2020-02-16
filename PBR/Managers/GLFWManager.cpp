@@ -72,6 +72,7 @@ void GLFWManager::Init(int width, int height, const char* name, void* renderer)
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	{
 		IMGUI_CHECKVERSION();

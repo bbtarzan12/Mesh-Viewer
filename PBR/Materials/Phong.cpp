@@ -1,40 +1,55 @@
 #include "Phong.h"
 #include "../Util/ShaderLoader.h"
+#include <imgui.h>
 
 Phong::Phong()
+	:uvScale(1, 1), uvOffset(0, 0	)
 {
 	shader = ShaderLoader::Load("Shaders/phong_vert.glsl", "Shaders/phong_frag.glsl");
-	modelMatrix = glGetUniformLocation(shader, "M");
-	viewMatrix = glGetUniformLocation(shader, "V");
-	projectionMatrix = glGetUniformLocation(shader, "P");
-	diffuseID = glGetUniformLocation(shader, "diffuseTexture");
-	normalID = glGetUniformLocation(shader, "normalTexture");
-	specularID = glGetUniformLocation(shader, "specularTexture");
+
+	glUseProgram(shader);
+	GLuint diffuseTexture = glGetUniformLocation(shader, "diffuseTexture");
+	glUniform1i(diffuseTexture, 0);
+
+	GLuint normalTexture = glGetUniformLocation(shader, "normalTexture");
+	glUniform1i(normalTexture, 1);
+
+	GLuint specularTexture = glGetUniformLocation(shader, "specularTexture");
+	glUniform1i(specularTexture, 2);
+	glUseProgram(0);
 }
 
 void Phong::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const
 {
 	Material::Draw(model, view, projection);
+	glDepthFunc(GL_LESS);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, GetTextureID("diffuse"));
-	glUniform1i(diffuseID, 0);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, GetTextureID("normal"));
-	glUniform1i(normalID, 1);
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, GetTextureID("specular"));
-	glUniform1i(specularID, 2);
 
-	glUniformMatrix4fv(modelMatrix, 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix4fv(viewMatrix, 1, GL_FALSE, &view[0][0]);
-	glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, &projection[0][0]);
+	SetVec2("uvOffset", uvOffset);
+	SetVec2("uvScale", uvScale);
+	SetMat4("M", model);
+	SetMat4("V", view);
+	SetMat4("P", projection);
 }
 
 void Phong::DrawUI()
 {
+	ImGui::Text("UV Offset");
+	ImGui::SameLine();
+	ImGui::DragFloat2("##UV Offset", &uvOffset[0], 0.1f);
+
+	ImGui::Text("UV Scale");
+	ImGui::SameLine();
+	ImGui::DragFloat2("##UV Scale", &uvScale[0], 0.1f);
+
 	DrawTexturePannel("diffuse");
 	DrawTexturePannel("normal");
 	DrawTexturePannel("specular");

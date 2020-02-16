@@ -92,7 +92,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -149,12 +149,16 @@
     <ClCompile Include="Lights\PointLight.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Managers\GLFWManager.cpp" />
+    <ClCompile Include="Materials\CubeMap.cpp" />
     <ClCompile Include="Materials\Phong.cpp" />
+    <ClCompile Include="Textures\CubeMapTexture.cpp" />
     <ClCompile Include="Util\MeshLoader.cpp" />
     <ClCompile Include="Util\ShaderLoader.cpp" />
     <ClCompile Include="Util\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\cubeMap_frag.glsl" />
+    <None Include="Shaders\cubeMap_vert.glsl" />
     <None Include="Shaders\phong_frag.glsl" />
     <None Include="Shaders\phong_lights.cgin" />
     <None Include="Shaders\phong_vert.glsl" />
@@ -171,7 +175,9 @@
     <ClInclude Include="Lights\PointLight.h" />
     <ClInclude Include="Managers\GLFWManager.h" />
     <ClInclude Include="Managers\MaterialManager.h" />
+    <ClInclude Include="Materials\CubeMap.h" />
     <ClInclude Include="Materials\Phong.h" />
+    <ClInclude Include="Textures\CubeMapTexture.h" />
     <ClInclude Include="Util\MeshLoader.h" />
     <ClInclude Include="Util\ShaderLoader.h" />
     <ClInclude Include="Util\TextureLoader.h" />

@@ -6,6 +6,7 @@
 class Camera;
 class Mesh;
 class Light;
+class CubeMapTexture;
 
 struct RendererOption
 {
@@ -33,6 +34,8 @@ private:
 	void Render(double deltaTime);
 	void Update(double deltaTime);
 	void LoadMesh(const std::string& filePath, const std::string& materialName);
+	void LoadCubeMap(const std::vector<std::string>& faces);
+
 	void CreateMaterial();
 	void CreateLight();
 
@@ -49,16 +52,18 @@ private:
 	std::vector<std::shared_ptr<Mesh>> meshes;
 	std::vector<std::shared_ptr<Light>> lights;
 
+	// Global Environment
+
 
 	// UI
 	int selectedMeshIndex = -1;
 	int selectedMaterialIndex = -1;
 
-	std::string selectedMeshFilePath;
+	std::string selectedMeshFilePath = "";
 
-	bool bEnableMaterialWindow;
-	bool bEnableMeshesWindow;
-	bool bEnableMeshLoadWindow;
-	bool bEnableSetMaterialWhenMeshLoad;
+	bool bEnableMaterialWindow = false;
+	bool bEnableMeshesWindow = false;
+	bool bEnableMeshLoadWindow = false;
+	bool bEnableSetMaterialWhenMeshLoad = false;
 
 };

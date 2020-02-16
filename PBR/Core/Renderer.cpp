@@ -3,9 +3,11 @@
 #include "../Core/Camera.h"
 #include "../Core/Mesh.h"
 #include "../Managers/MaterialManager.h"
+#include "../Materials/CubeMap.h"
 #include "../Materials/Phong.h"
 #include "../Util/TextureLoader.h"
 #include "Texture.h"
+#include "../Textures/CubeMapTexture.h"
 #include "../Lights/PointLight.h"
 #include "../Lights/DirectionalLight.h"
 
@@ -38,11 +40,26 @@ void Renderer::Init()
 	GLFWManager::Instance().Init(rendererOption.width, rendererOption.height, "PBR", this);
 	ImGuiFileDialog::Instance()->SetFilterColor(".png", ImVec4(0, 1, 1, 0.5));
 
+	// #Todo : CubeMap Mesh와 Material 생성과정 정리하기
+	std::vector<std::string> faces
+	{
+		"Images/Environment/left.jpg",
+		"Images/Environment/right.jpg",
+		"Images/Environment/top.jpg",
+		"Images/Environment/bottom.jpg",
+		"Images/Environment/front.jpg",
+		"Images/Environment/back.jpg"
+	};
+	std::shared_ptr<CubeMap> cubeMapMaterial = MaterialManager::Instance().CreateMaterial<CubeMap>("CubeMap");
+	cubeMapMaterial->SetTexture("cubeMapTexture", std::make_shared<CubeMapTexture>(faces));
+
+	LoadMesh("Meshes/skybox.obj", "CubeMap");
+
 	// #Todo : Material 제작 윈도우 만들기
 	std::shared_ptr<Phong> phongMaterial = MaterialManager::Instance().CreateMaterial<Phong>("Phong");
-	phongMaterial->SetTexture("diffuse", Texture::CreateTexture("Images/Stone_02_COLOR.png"));
-	phongMaterial->SetTexture("normal", Texture::CreateTexture("Images/Stone_02_NRM.png"));
-	phongMaterial->SetTexture("specular", Texture::CreateTexture("Images/Stone_02_SPEC.png"));
+	phongMaterial->SetTexture("diffuse", std::make_shared<Texture>("Images/Stone_02_COLOR.png"));
+	phongMaterial->SetTexture("normal", std::make_shared<Texture>("Images/Stone_02_NRM.png"));
+	phongMaterial->SetTexture("specular", std::make_shared<Texture>("Images/Stone_02_SPEC.png"));
 
 	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(0, -1, 0), glm::vec3(1, 1, 1), 1.0f);
 	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(7, 7, 7), glm::vec3(1, 1, 1), 50.0f);
@@ -267,6 +284,11 @@ void Renderer::LoadMesh(const std::string& filePath, const std::string& material
 	mesh->SetMaterial(MaterialManager::Instance().GetMaterial(materialName));
 
 	meshes.push_back(mesh);
+}
+
+void Renderer::LoadCubeMap(const std::vector<std::string>& faces)
+{
+
 }
 
 void Renderer::HandleKeyboard(int key, int scancode, int action, int mods)

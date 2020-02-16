@@ -25,6 +25,9 @@
     <Filter Include="Lights">
       <UniqueIdentifier>{53047e29-7473-4af5-812b-647ce946ce98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{52c424cd-ceef-4fdc-98ec-b46efb2236e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -85,7 +88,15 @@
     <ClCompile Include="Lights\PointLight.cpp">
       <Filter>Lights</Filter>
     </ClCompile>
-    <ClCompile Include="Lights\DirectionalLight.cpp" />
+    <ClCompile Include="Materials\CubeMap.cpp">
+      <Filter>Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures\CubeMapTexture.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Lights\DirectionalLight.cpp">
+      <Filter>Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_vert.glsl">
@@ -95,6 +106,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\phong_lights.cgin">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\cubeMap_frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\cubeMap_vert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -143,6 +160,12 @@
     </ClInclude>
     <ClInclude Include="Lights\DirectionalLight.h">
       <Filter>Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures\CubeMapTexture.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\CubeMap.h">
+      <Filter>Materials</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,7 +8,21 @@ void Material::Draw(const glm::mat4& model, const glm::mat4& view, const glm::ma
 	glUseProgram(shader);
 }
 
-void Material::SetVec3(const std::string& name, const glm::vec3& value)
+void Material::SetVec2(const std::string& name, const glm::vec2& value) const
+{
+	glUseProgram(shader);
+	GLuint id = glGetUniformLocation(shader, name.c_str());
+
+	if (id == -1)
+		return;
+
+	glUniform2fv(id, 1, &value[0]);
+
+	if (!CheckCurrentShader())
+		glUseProgram(0);
+}
+
+void Material::SetVec3(const std::string& name, const glm::vec3& value) const
 {
 	glUseProgram(shader);
 	GLuint id = glGetUniformLocation(shader, name.c_str());
@@ -17,7 +31,9 @@ void Material::SetVec3(const std::string& name, const glm::vec3& value)
 		return;
 
 	glUniform3fv(id, 1, &value[0]);
-	glUseProgram(0);
+
+	if (!CheckCurrentShader())
+		glUseProgram(0);
 }
 
 void Material::SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture)
@@ -29,7 +45,7 @@ void Material::SetTexture(const std::string& name, const std::shared_ptr<Texture
 }
 
 
-void Material::SetFloat(const std::string& name, const float power)
+void Material::SetFloat(const std::string& name, const float value) const
 {
 	glUseProgram(shader);
 	GLuint id = glGetUniformLocation(shader, name.c_str());
@@ -37,8 +53,24 @@ void Material::SetFloat(const std::string& name, const float power)
 	if (id == -1)
 		return;
 
-	glUniform1f(id, power);
-	glUseProgram(0);
+	glUniform1f(id, value);
+
+	if(!CheckCurrentShader())
+		glUseProgram(0);
+}
+
+void Material::SetMat4(const std::string& name, const glm::mat4& value) const
+{
+	glUseProgram(shader);
+	GLuint id = glGetUniformLocation(shader, name.c_str());
+
+	if (id == -1)
+		return;
+
+	glUniformMatrix4fv(id, 1, GL_FALSE, &value[0][0]);
+
+	if (!CheckCurrentShader())
+		glUseProgram(0);
 }
 
 glm::ivec2 Material::GetTextureSize(const std::string& name) const
@@ -94,10 +126,17 @@ void Material::DrawTexturePannel(const std::string& name)
 			{
 				std::string filePathName = ImGuiFileDialog::Instance()->GetFilepathName();
 
-				SetTexture(name, Texture::CreateTexture(filePathName));
+				SetTexture(name, std::make_shared<Texture>(filePathName));
 			}
 			ImGuiFileDialog::Instance()->CloseDialog(name);
 		}
 	}
+}
+
+bool Material::CheckCurrentShader() const
+{
+	GLint id;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &id);
+	return shader == id;
 }
 
