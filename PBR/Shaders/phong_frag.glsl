@@ -1,45 +1,72 @@
 #version 330 core
 
+#include phong_lights.cgin
+
 in vec2 UV;
 in vec3 fragPosition_worldSpace;
 in vec3 fragPosition_tangetSpace;
 in vec3 cameraPosition_tangentSpace;
-in vec3 lightPosition_tangentSpace;
+in vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
+in vec3 directionalLightDirection_tangentSpace;
 
 out vec3 color;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D specularTexture;
-uniform vec3 lightPosition_worldSpace;
 uniform vec3 cameraPosition_worldSpace;
+
+
+uniform DirectionalLight directionalLight;
+uniform PointLight pointLights[NUM_POINT_LIGHTS];
+
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 lightTangentDirection, vec3 cameraTangentDirection);
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 lightTangentPosition, vec3 fragWorldPosition, vec3 cameraWorldPosition, vec3 fragTangentPosition, vec3 cameraTangentDirection);
 
 void main()
 {
-	vec3 lightColor = vec3(1, 1, 1);
-	float lightPower = 50.0f;
+	vec3 normal = normalize(texture(normalTexture, UV * 10).rgb * 2.0 - 1.0);
 
-	vec3 materialDiffuseColor = texture(diffuseTexture, UV).rgb;
-	vec3 materialAmbientColor = 0.1 * materialDiffuseColor;
-	vec3 materialSpecularColor = texture(specularTexture, UV).rgb * 0.3;
+	vec3 cameraTangentDirection = normalize(cameraPosition_tangentSpace - fragPosition_tangetSpace);
+	vec3 result = CalculateDirectionalLight(directionalLight, normal, directionalLightDirection_tangentSpace, cameraTangentDirection);
+	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
+	{
+		result += CalculatePointLight(pointLights[i], normal, lightPositions_tangentSpace[i], fragPosition_worldSpace, cameraPosition_worldSpace, fragPosition_tangetSpace, cameraTangentDirection);
+	}
 
-	vec3 textureNormal_tangentSpace = normalize(texture(normalTexture, UV).rgb * 2.0 - 1.0);
+	vec3 ambient = vec3(texture(diffuseTexture, UV)) * 0.1;
+	result += ambient;
 
-	float lightDistance = length(lightPosition_worldSpace - fragPosition_worldSpace);
-	float lightDistanceSquared = lightDistance * lightDistance;
+	color = result;
+}
 
-	vec3 n = textureNormal_tangentSpace;
-	vec3 l = normalize(lightPosition_tangentSpace - fragPosition_tangetSpace);
-	float cosTheta = clamp(dot(n, l), 0, 1);
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 lightTangentDirection, vec3 cameraTangentDirection)
+{
+	vec3 lightDir = normalize(-lightTangentDirection);
+	float diff = clamp(dot(normal, lightDir), 0, 1);
 
-	vec3 E = normalize(cameraPosition_tangentSpace - fragPosition_tangetSpace);
-	vec3 R = reflect(-l, n);
-	float cosAlpha = clamp(dot(E, R), 0, 1);
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), 32);
 
-	vec3 linearColor = 
-		materialAmbientColor +
-		materialSpecularColor * lightColor * lightPower * pow(cosAlpha, 32) / lightDistanceSquared +
-		materialDiffuseColor * lightColor * lightPower * cosTheta / lightDistanceSquared;
+	vec3 diffuse = vec3(texture(diffuseTexture, UV)) * light.color * light.power * diff;
+	vec3 specular = vec3(texture(specularTexture, UV)) * light.color * light.power * spec;
 
-	color = linearColor;
+	return diffuse + specular;
+}
+
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 lightTangentPosition, vec3 fragWorldPosition, vec3 cameraWorldPosition, vec3 fragTangentPosition, vec3 cameraTangentDirection)
+{
+	float distance = length(light.position - fragWorldPosition);
+	float attenuation = 1.0 / (distance * distance);
+
+	vec3 lightDir = normalize(lightTangentPosition - fragTangentPosition);
+	float diff = clamp(dot(normal, lightDir), 0, 1);
+
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), 32);
+
+	vec3 diffuse = vec3(texture(diffuseTexture, UV)) * light.color * light.power * diff * attenuation;
+	vec3 specular = vec3(texture(specularTexture, UV)) * light.color * light.power * spec * attenuation;
+
+	return diffuse + specular;
 }

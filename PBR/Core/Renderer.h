@@ -5,6 +5,7 @@
 
 class Camera;
 class Mesh;
+class Light;
 
 struct RendererOption
 {
@@ -33,6 +34,7 @@ private:
 	void Update(double deltaTime);
 	void LoadMesh(const std::string& filePath, const std::string& materialName);
 	void CreateMaterial();
+	void CreateLight();
 
 	// UI
 	void RenderUI(double deltaTime);
@@ -45,6 +47,7 @@ private:
 	RendererOption rendererOption;
 	std::shared_ptr<Camera> camera;
 	std::vector<std::shared_ptr<Mesh>> meshes;
+	std::vector<std::shared_ptr<Light>> lights;
 
 
 	// UI

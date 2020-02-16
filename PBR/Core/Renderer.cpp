@@ -6,6 +6,8 @@
 #include "../Materials/Phong.h"
 #include "../Util/TextureLoader.h"
 #include "Texture.h"
+#include "../Lights/PointLight.h"
+#include "../Lights/DirectionalLight.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -41,7 +43,13 @@ void Renderer::Init()
 	phongMaterial->SetTexture("diffuse", Texture::CreateTexture("Images/Stone_02_COLOR.png"));
 	phongMaterial->SetTexture("normal", Texture::CreateTexture("Images/Stone_02_NRM.png"));
 	phongMaterial->SetTexture("specular", Texture::CreateTexture("Images/Stone_02_SPEC.png"));
-	phongMaterial->SetVec3("lightPosition_worldSpace", glm::vec3(7, 7, 7));
+
+	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(0, -1, 0), glm::vec3(1, 1, 1), 1.0f);
+	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(7, 7, 7), glm::vec3(1, 1, 1), 50.0f);
+	std::shared_ptr<PointLight> light2 = std::make_shared<PointLight>(glm::vec3(-7, -7, -7), glm::vec3(1, 1, 1), 100.0f);
+	lights.push_back(directionalLight);
+	lights.push_back(light);
+	lights.push_back(light2);
 }
 
 void Renderer::SetCamera(const std::shared_ptr<Camera>& newCamera)
@@ -77,7 +85,13 @@ void Renderer::Render(double deltaTime)
 
 	for (auto& mesh : meshes)
 	{
-		mesh->GetMaterial()->SetVec3("cameraPosition_worldSpace", camera->GetPosition());
+		const std::shared_ptr<Material> material = mesh->GetMaterial();
+		for(int i = 0 ; i < lights.size(); i++)
+		{
+			lights[i]->Draw(material, i);
+		}
+
+		material->SetVec3("cameraPosition_worldSpace", camera->GetPosition());
 		mesh->Draw(camera->GetView(), camera->GetProjection());
 	}
 

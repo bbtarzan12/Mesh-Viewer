@@ -19,6 +19,7 @@ public:
 
 	void SetVec3(const std::string& name, const glm::vec3& value);
 	void SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
+	void SetFloat(const std::string& name, const float power);
 
 protected:
 	glm::ivec2 GetTextureSize(const std::string& name) const;
@@ -30,4 +31,4 @@ protected:
 	GLuint shader;
 
 	std::map<std::string, std::shared_ptr<Texture>> textures;
-};                                                              
+};

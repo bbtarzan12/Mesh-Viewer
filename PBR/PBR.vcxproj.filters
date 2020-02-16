@@ -22,6 +22,9 @@
     <Filter Include="Managers">
       <UniqueIdentifier>{90abf51e-4711-4618-80e7-513ea621b16e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lights">
+      <UniqueIdentifier>{53047e29-7473-4af5-812b-647ce946ce98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -79,12 +82,19 @@
     <ClCompile Include="Libraries\Imgui\ImGuiFileDialog.cpp">
       <Filter>Libraries\Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Lights\PointLight.cpp">
+      <Filter>Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Lights\DirectionalLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_vert.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\phong_frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\phong_lights.cgin">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -124,6 +134,15 @@
     </ClInclude>
     <ClInclude Include="Core\Texture.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Light.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights\PointLight.h">
+      <Filter>Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights\DirectionalLight.h">
+      <Filter>Lights</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

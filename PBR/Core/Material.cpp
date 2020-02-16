@@ -28,6 +28,19 @@ void Material::SetTexture(const std::string& name, const std::shared_ptr<Texture
 	textures[name] = texture;
 }
 
+
+void Material::SetFloat(const std::string& name, const float power)
+{
+	glUseProgram(shader);
+	GLuint id = glGetUniformLocation(shader, name.c_str());
+
+	if (id == -1)
+		return;
+
+	glUniform1f(id, power);
+	glUseProgram(0);
+}
+
 glm::ivec2 Material::GetTextureSize(const std::string& name) const
 {
 	if (textures.find(name) == textures.end())
@@ -87,3 +100,4 @@ void Material::DrawTexturePannel(const std::string& name)
 		}
 	}
 }
+

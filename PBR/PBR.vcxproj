@@ -145,6 +145,8 @@
     <ClCompile Include="Libraries\Imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Lights\DirectionalLight.cpp" />
+    <ClCompile Include="Lights\PointLight.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Managers\GLFWManager.cpp" />
     <ClCompile Include="Materials\Phong.cpp" />
@@ -154,15 +156,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_frag.glsl" />
+    <None Include="Shaders\phong_lights.cgin" />
     <None Include="Shaders\phong_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="Core\Light.h" />
     <ClInclude Include="Core\Material.h" />
     <ClInclude Include="Core\Mesh.h" />
     <ClInclude Include="Core\Renderer.h" />
     <ClInclude Include="Core\SingletonManager.h" />
     <ClInclude Include="Core\Texture.h" />
+    <ClInclude Include="Lights\DirectionalLight.h" />
+    <ClInclude Include="Lights\PointLight.h" />
     <ClInclude Include="Managers\GLFWManager.h" />
     <ClInclude Include="Managers\MaterialManager.h" />
     <ClInclude Include="Materials\Phong.h" />
