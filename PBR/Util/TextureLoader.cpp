@@ -3,10 +3,11 @@
 
 #include <FreeImage/FreeImage.h>
 
-void TextureLoader::Load(const std::string& filePath, GLuint& id, glm::ivec2& size)
+void TextureLoader::Load(const std::string& filePath, GLuint& id, glm::ivec2& size, GLenum& type)
 {
 	FIBITMAP* image = LoadImage(filePath, size);
 
+	type = GL_TEXTURE_2D;
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -16,8 +17,10 @@ void TextureLoader::Load(const std::string& filePath, GLuint& id, glm::ivec2& si
 	UnloadImage(image);
 }
 
-void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id)
+void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id, glm::ivec2& size, GLenum& type)
 {
+	type = GL_TEXTURE_CUBE_MAP;
+
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -25,8 +28,6 @@ void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-	glm::ivec2 size;
 
 	for (int i = 0; i < facesPath.size(); i++)
 	{

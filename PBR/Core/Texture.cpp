@@ -4,7 +4,7 @@
 
 Texture::Texture(const std::string& filePath)
 {
-	TextureLoader::Load(filePath, id, size);
+	TextureLoader::Load(filePath, id, size, type);
 }
 
 Texture::~Texture()
@@ -20,4 +20,9 @@ const GLuint& Texture::GetID() const
 const glm::ivec2& Texture::GetSize() const
 {
 	return size;
+}
+
+const GLenum& Texture::GetType() const
+{
+	return type;
 }

@@ -1,10 +1,15 @@
 #include "CubeMap.h"
-#include "../Util/ShaderLoader.h"
 #include <imgui.h>
 
 CubeMap::CubeMap()
+	:Material
+	(
+		"Shaders/cubeMap_vert.glsl",
+		"Shaders/cubeMap_frag.glsl",
+		{"cubeMapTexture"}
+	)
 {
-	shader = ShaderLoader::Load("Shaders/cubeMap_vert.glsl", "Shaders/cubeMap_frag.glsl");
+
 }
 
 void CubeMap::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const
@@ -13,8 +18,6 @@ void CubeMap::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat
 
 	Material::Draw(model, newView, projection);
 	glDepthFunc(GL_LEQUAL);
-
-	glBindTexture(GL_TEXTURE_CUBE_MAP, GetTextureID("cubeMapTexture"));
 
 	SetMat4("V", newView);
 	SetMat4("P", projection);

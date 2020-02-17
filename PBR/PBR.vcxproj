@@ -157,6 +157,7 @@
     <ClCompile Include="Util\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\common.cgin" />
     <None Include="Shaders\cubeMap_frag.glsl" />
     <None Include="Shaders\cubeMap_vert.glsl" />
     <None Include="Shaders\phong_frag.glsl" />

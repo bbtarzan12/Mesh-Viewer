@@ -50,17 +50,20 @@ void Renderer::Init()
 		"Images/Environment/front.jpg",
 		"Images/Environment/back.jpg"
 	};
+
+	std::shared_ptr<CubeMapTexture> cubeMapTexture = std::make_shared<CubeMapTexture>(faces);
+
 	std::shared_ptr<CubeMap> cubeMapMaterial = MaterialManager::Instance().CreateMaterial<CubeMap>("CubeMap");
-	cubeMapMaterial->SetTexture("cubeMapTexture", std::make_shared<CubeMapTexture>(faces));
+	cubeMapMaterial->SetTexture("cubeMapTexture", cubeMapTexture);
 
 	LoadMesh("Meshes/skybox.obj", "CubeMap");
 
 	// #Todo : Material 제작 윈도우 만들기
 	std::shared_ptr<Phong> phongMaterial = MaterialManager::Instance().CreateMaterial<Phong>("Phong");
-	phongMaterial->SetTexture("cubeMapTexture", std::make_shared<CubeMapTexture>(faces));
-	phongMaterial->SetTexture("diffuse", std::make_shared<Texture>("Images/Stone_02_COLOR.png"));
-	phongMaterial->SetTexture("normal", std::make_shared<Texture>("Images/Stone_02_NRM.png"));
-	phongMaterial->SetTexture("specular", std::make_shared<Texture>("Images/Stone_02_SPEC.png"));
+	phongMaterial->SetTexture("cubeMapTexture", cubeMapTexture);
+	phongMaterial->SetTexture("diffuseTexture", std::make_shared<Texture>("Images/Stone_02_COLOR.png"));
+	phongMaterial->SetTexture("normalTexture", std::make_shared<Texture>("Images/Stone_02_NRM.png"));
+	phongMaterial->SetTexture("specularTexture", std::make_shared<Texture>("Images/Stone_02_SPEC.png"));
 
 	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(0, -1, 0), glm::vec3(1, 1, 1), 1.0f);
 	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(7, 7, 7), glm::vec3(1, 1, 1), 50.0f);

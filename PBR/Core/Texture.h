@@ -12,6 +12,7 @@ public:
 
 	const GLuint& GetID() const;
 	const glm::ivec2& GetSize() const;
+	const GLenum& GetType() const;
 
 protected:
 	Texture() = default;
@@ -19,4 +20,5 @@ protected:
 protected:
 	GLuint id;
 	glm::ivec2 size;
+	GLenum type;
 };

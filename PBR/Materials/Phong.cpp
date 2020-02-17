@@ -1,26 +1,17 @@
 #include "Phong.h"
-#include "../Util/ShaderLoader.h"
 #include <imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 
 Phong::Phong()
-	:uvScale(1, 1), uvOffset(0, 0), IOR(1.5)
+	:uvScale(1, 1),
+	uvOffset(0, 0),
+	Material
+	(
+		"Shaders/phong_vert.glsl", "Shaders/phong_frag.glsl",
+		{"cubeMapTexture", "diffuseTexture", "normalTexture", "specularTexture"}
+	)
 {
-	shader = ShaderLoader::Load("Shaders/phong_vert.glsl", "Shaders/phong_frag.glsl");
 
-	glUseProgram(shader);
-
-	GLuint cubeMapTexture = glGetUniformLocation(shader, "cubeMaptexture");
-	glUniform1i(cubeMapTexture, 0);
-
-	GLuint diffuseTexture = glGetUniformLocation(shader, "diffuseTexture");
-	glUniform1i(diffuseTexture, 1);
-
-	GLuint normalTexture = glGetUniformLocation(shader, "normalTexture");
-	glUniform1i(normalTexture, 2);
-
-	GLuint specularTexture = glGetUniformLocation(shader, "specularTexture");
-	glUniform1i(specularTexture, 3);
-	glUseProgram(0);
 }
 
 void Phong::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const
@@ -28,21 +19,8 @@ void Phong::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4&
 	Material::Draw(model, view, projection);
 	glDepthFunc(GL_LESS);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, GetTextureID("cubeMapTexture"));
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, GetTextureID("diffuse"));
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, GetTextureID("normal"));
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, GetTextureID("specular"));
-
 	SetVec2("uvOffset", uvOffset);
 	SetVec2("uvScale", uvScale);
-	SetFloat("IOR", IOR);
 	SetMat4("M", model);
 	SetMat4("V", view);
 	SetMat4("P", projection);
@@ -58,11 +36,29 @@ void Phong::DrawUI()
 	ImGui::SameLine();
 	ImGui::DragFloat2("##UV Scale", &uvScale[0], 0.1f);
 
-	ImGui::Text("IOR");
-	ImGui::SameLine();
-	ImGui::SliderFloat("##IOR", &IOR, 1.0f, 3.5f, "%.4f");
+	if (!DrawTexturePannel("diffuseTexture", {300, 300}))
+	{
+		ImGui::ColorPicker4("##Color", glm::value_ptr(defaultColors[1]));
 
-	DrawTexturePannel("diffuse");
-	DrawTexturePannel("normal");
-	DrawTexturePannel("specular");
+		ImGui::EndChild();
+	}
+	if (!DrawTexturePannel("normalTexture", { 300, 60 }))
+	{
+		ImGui::TextDisabled("Use Mesh Normal");
+		ImGui::EndChild();
+	}
+	
+	if (!DrawTexturePannel("specularTexture", {300, 100}))
+	{
+		float power = defaultColors[3].r;
+		ImGui::Text("Power");
+		ImGui::SameLine();
+		if (ImGui::SliderFloat("##Power", &power, 0, 1))
+		{
+			defaultColors[3].r = power;
+			defaultColors[3].g = power;
+			defaultColors[3].b = power;
+		}
+		ImGui::EndChild();
+	}
 }

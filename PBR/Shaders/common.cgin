@@ -1,0 +1,34 @@
+
+struct Texture2D
+{
+	sampler2D texture;
+	vec4 defaultColor;
+	bool use;
+};
+
+struct TextureCube
+{
+	samplerCube texture;
+	vec4 defaultColor;
+	bool use;
+};
+
+vec4 Sample(Texture2D t, vec2 UV)
+{
+	if(t.use)
+	{
+		return texture(t.texture, UV);
+	}
+
+	return t.defaultColor;
+}
+
+vec4 Sample(TextureCube t, vec3 UV)
+{
+	if(t.use)
+	{
+		return texture(t.texture, UV);
+	}
+
+	return t.defaultColor;
+}

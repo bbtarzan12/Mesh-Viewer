@@ -4,5 +4,5 @@
 
 CubeMapTexture::CubeMapTexture(const std::vector<std::string>& facesPath)
 {
-	TextureLoader::Load(facesPath, id);
+	TextureLoader::Load(facesPath, id, size, type);
 }
