@@ -13,6 +13,7 @@ out vec3 fragPosition_tangentSpace;
 out vec3 cameraPosition_tangentSpace;
 out vec3 directionalLightDirection_tangentSpace;
 out vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
+out mat3 TBN;
 
 uniform mat4 M;
 uniform mat4 V;
@@ -34,7 +35,7 @@ void main()
 	T = normalize(T - dot(T, N) * N);
 	vec3 B = cross(N, T);
 
-	mat3 TBN = transpose(mat3(T, B, N));
+	TBN = transpose(mat3(T, B, N));
 	fragPosition_tangentSpace = TBN * fragPosition_worldSpace;
 	cameraPosition_tangentSpace = TBN * cameraPosition_worldSpace;
 	directionalLightDirection_tangentSpace = normalize(TBN * directionalLight.direction);

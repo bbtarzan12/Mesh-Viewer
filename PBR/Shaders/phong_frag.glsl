@@ -4,13 +4,16 @@
 
 in vec2 UV;
 in vec3 fragPosition_worldSpace;
-in vec3 fragPosition_tangetSpace;
+in vec3 fragPosition_tangentSpace;
 in vec3 cameraPosition_tangentSpace;
-in vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
 in vec3 directionalLightDirection_tangentSpace;
+in vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
+in mat3 TBN;
 
 out vec3 color;
 
+uniform float IOR;
+uniform samplerCube cubeMapTexture;
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D specularTexture;
@@ -21,54 +24,96 @@ uniform vec2 uvScale;
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[NUM_POINT_LIGHTS];
 
-vec3 CalculateDirectionalLight(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightTangentDirection, vec3 cameraTangentDirection);
-vec3 CalculatePointLight(PointLight light, vec2 uv, vec3 normal, vec3 lightTangentPosition, vec3 fragWorldPosition, vec3 cameraWorldPosition, vec3 fragTangentPosition, vec3 cameraTangentDirection);
+vec3 CalculateDirectionalLightDiffuse(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightTangentDirection);
+vec3 CalculateDirectionalLightSpecular(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightTangentDirection, vec3 cameraTangentDirection);
+
+vec3 CalculatePointLightDiffuse(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, float attenuation);
+vec3 CalculatePointLightSpecular(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, vec3 cameraTangentDirection, float attenuation);
+
+float CalculateF0(float IOR);
+float FresnelSchlickApproximation(float IOR, vec3 normal, vec3 v);
 
 void main()
 {
 	vec2 uv = vec2(UV.x * uvScale.x, UV.y * uvScale.y) + uvOffset;
 	vec3 normal = normalize((texture(normalTexture, uv).rgb - 0.5) * 2.0);
 
-	vec3 cameraTangentDirection = normalize(cameraPosition_tangentSpace - fragPosition_tangetSpace);
-	vec3 result = CalculateDirectionalLight(directionalLight, uv, normal, directionalLightDirection_tangentSpace, cameraTangentDirection);
+	vec3 lightDir = normalize(-directionalLightDirection_tangentSpace);
+	vec3 cameraTangentDirection = normalize(cameraPosition_tangentSpace - fragPosition_tangentSpace);
+
+	vec3 diffuseLight = CalculateDirectionalLightDiffuse(directionalLight, uv, normal, lightDir);
+	vec3 specularLight = CalculateDirectionalLightSpecular(directionalLight, uv, normal, lightDir, cameraTangentDirection);
+
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
 	{
-		result += CalculatePointLight(pointLights[i], uv, normal, lightPositions_tangentSpace[i], fragPosition_worldSpace, cameraPosition_worldSpace, fragPosition_tangetSpace, cameraTangentDirection);
+		float distance = length(pointLights[i].position - fragPosition_worldSpace);
+		float attenuation = 1.0 / (distance * distance);
+
+		lightDir = normalize(lightPositions_tangentSpace[i] - fragPosition_tangentSpace);
+		diffuseLight += CalculatePointLightDiffuse(pointLights[i], uv, normal, lightDir, attenuation);
+		specularLight += CalculatePointLightSpecular(pointLights[i], uv, normal, lightDir, cameraTangentDirection, attenuation);
 	}
 
+	// Reflection (Ir)
+	vec3 Ir = reflect(-cameraTangentDirection, normal);
+	float FrIr = FresnelSchlickApproximation(IOR, normal, Ir);
+	Ir = Ir * TBN; // Tangent To World space
+	vec3 cubeReflection = vec3(texture(cubeMapTexture, Ir)) * FrIr;
+
+	vec3 specular = vec3(texture(specularTexture, uv)) * (specularLight + cubeReflection);
+	vec3 diffuse = vec3(texture(diffuseTexture, uv)) * diffuseLight;
 	vec3 ambient = vec3(texture(diffuseTexture, uv)) * 0.1;
-	result += ambient;
 
-	color = result;
+	color = diffuse + specular + ambient;
+}
+//Ks 
+//( 
+//	{ 
+//		SUM j = 1..ls, 
+//		((H * Hj) ^ Ns) * Ij * Fr(Lj*Hj,Ks,Ns) * Ij 
+//	} 
+//	+
+//	Fr(N*V, Ks, Ns)Ir}
+//)
+
+vec3 CalculateDirectionalLightDiffuse(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightDir)
+{
+	float diff = clamp(dot(normal, lightDir), 0, 1);
+	return light.color * light.power * diff;
 }
 
-vec3 CalculateDirectionalLight(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightTangentDirection, vec3 cameraTangentDirection)
+vec3 CalculateDirectionalLightSpecular(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightDir, vec3 cameraTangentDirection)
 {
-	vec3 lightDir = normalize(-lightTangentDirection);
-	float diff = clamp(dot(normal, lightDir), 0, 1);
-
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), 32);
-
-	vec3 diffuse = vec3(texture(diffuseTexture, uv)) * light.color * light.power * diff;
-	vec3 specular = vec3(texture(specularTexture, uv)) * light.color * light.power * spec;
-
-	return diffuse + specular;
+	return light.color * light.power * spec * FresnelSchlickApproximation(IOR, normal, reflectDir);
 }
 
-vec3 CalculatePointLight(PointLight light, vec2 uv, vec3 normal, vec3 lightTangentPosition, vec3 fragWorldPosition, vec3 cameraWorldPosition, vec3 fragTangentPosition, vec3 cameraTangentDirection)
+vec3 CalculatePointLightDiffuse(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, float attenuation)
 {
-	float distance = length(light.position - fragWorldPosition);
-	float attenuation = 1.0 / (distance * distance);
-
-	vec3 lightDir = normalize(lightTangentPosition - fragTangentPosition);
 	float diff = clamp(dot(normal, lightDir), 0, 1);
+	return light.color * light.power * diff * attenuation;
+}
 
+vec3 CalculatePointLightSpecular(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, vec3 cameraTangentDirection, float attenuation)
+{
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), 32);
+	return light.color * light.power * spec * attenuation * FresnelSchlickApproximation(IOR, normal, reflectDir);
+}
 
-	vec3 diffuse = vec3(texture(diffuseTexture, uv)) * light.color * light.power * diff * attenuation;
-	vec3 specular = vec3(texture(specularTexture, uv)) * light.color * light.power * spec * attenuation;
+float CalculateF0(float IOR)
+{
+	float num = IOR - 1.0;
+	float denom = IOR + 1.0;
+	float f = (num / denom);
 
-	return diffuse + specular;
+	return f * f;
+}
+
+float FresnelSchlickApproximation(float IOR, vec3 normal, vec3 l)
+{
+	float F0 = CalculateF0(IOR);
+	float NdotL = clamp(dot(normal, l), 0, 1);
+	return F0 + (1.0 - F0) * pow(1.0 - NdotL, 5);
 }

@@ -57,6 +57,7 @@ void Renderer::Init()
 
 	// #Todo : Material 제작 윈도우 만들기
 	std::shared_ptr<Phong> phongMaterial = MaterialManager::Instance().CreateMaterial<Phong>("Phong");
+	phongMaterial->SetTexture("cubeMapTexture", std::make_shared<CubeMapTexture>(faces));
 	phongMaterial->SetTexture("diffuse", std::make_shared<Texture>("Images/Stone_02_COLOR.png"));
 	phongMaterial->SetTexture("normal", std::make_shared<Texture>("Images/Stone_02_NRM.png"));
 	phongMaterial->SetTexture("specular", std::make_shared<Texture>("Images/Stone_02_SPEC.png"));
