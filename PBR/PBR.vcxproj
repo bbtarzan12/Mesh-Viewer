@@ -94,6 +94,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,6 +124,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,8 +139,8 @@
     <ClCompile Include="Core\Mesh.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />
     <ClCompile Include="Core\Texture.cpp" />
+    <ClCompile Include="Libraries\Imgui\imfilebrowser.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui.cpp" />
-    <ClCompile Include="Libraries\Imgui\ImGuiFileDialog.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_custom.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_demo.cpp" />
     <ClCompile Include="Libraries\Imgui\imgui_draw.cpp" />

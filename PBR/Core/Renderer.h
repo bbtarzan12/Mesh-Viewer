@@ -7,6 +7,7 @@ class Camera;
 class Mesh;
 class Light;
 class CubeMapTexture;
+namespace ImGui { class FileBrowser; }
 
 struct RendererOption
 {
@@ -56,6 +57,7 @@ private:
 
 
 	// UI
+	std::shared_ptr<ImGui::FileBrowser> fileDialog;
 	int selectedMeshIndex = -1;
 	int selectedMaterialIndex = -1;
 

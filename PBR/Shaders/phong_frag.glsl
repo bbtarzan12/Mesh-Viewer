@@ -70,7 +70,6 @@ void main()
 	vec3 ambient = vec3(Sample(diffuseTexture, uv)) * 0.1;
 
 	color = diffuse + specular + ambient;
-	//color = vec3(Sample(diffuseTexture, uv));
 }
 
 vec3 CalculateDirectionalLightDiffuse(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightDir)

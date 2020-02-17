@@ -8,6 +8,7 @@
 #include <vector>
 
 class Texture;
+namespace ImGui { class FileBrowser; }
 
 class Material
 {
@@ -47,4 +48,9 @@ protected:
 	std::map<std::string, std::shared_ptr<Texture>> textures;
 	std::vector<std::string> textureNames;
 	std::vector<glm::vec4> defaultColors;
+
+private:
+
+	//UI
+	std::shared_ptr<ImGui::FileBrowser> fileDialog;
 };

@@ -12,10 +12,10 @@
 #include "../Lights/DirectionalLight.h"
 
 #include <imgui.h>
+#include <imfilebrowser.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_custom.h>
-#include <ImGuiFileDialog.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -25,7 +25,7 @@
 
 
 Renderer::Renderer(const RendererOption& rendererOption)
-	:rendererOption(rendererOption)
+	:rendererOption(rendererOption), fileDialog(std::make_shared<ImGui::FileBrowser>())
 {
 
 }
@@ -38,7 +38,6 @@ Renderer::~Renderer()
 void Renderer::Init()
 {
 	GLFWManager::Instance().Init(rendererOption.width, rendererOption.height, "PBR", this);
-	ImGuiFileDialog::Instance()->SetFilterColor(".png", ImVec4(0, 1, 1, 0.5));
 
 	// #Todo : CubeMap Mesh와 Material 생성과정 정리하기
 	std::vector<std::string> faces
@@ -133,6 +132,10 @@ void Renderer::RenderUI(double deltaTime)
 		if (ImGui::MenuItem("Load Mesh"))
 		{
 			bEnableMeshLoadWindow = !bEnableMeshLoadWindow;
+
+			fileDialog->SetTitle("Load Mesh");
+			fileDialog->SetTypeFilters({ ".obj" });
+			fileDialog->Open();
 		}
 
 		if (ImGui::MenuItem("Meshes"))
@@ -261,17 +264,12 @@ void Renderer::RenderMeshLoadWindow(double deltaTime)
 	}
 	else
 	{
-		ImGuiFileDialog::Instance()->OpenDialog("Load Mesh", "Load Mesh", ".obj\0", ".");
-
-		if (ImGuiFileDialog::Instance()->FileDialog("Load Mesh"))
+		fileDialog->Display();
+		if (fileDialog->HasSelected())
 		{
-			if (ImGuiFileDialog::Instance()->IsOk)
-			{
-				selectedMeshFilePath = ImGuiFileDialog::Instance()->GetFilepathName();
-				bEnableSetMaterialWhenMeshLoad = true;
-				selectedMaterialIndex = -1;
-			}
-			ImGuiFileDialog::Instance()->CloseDialog("Load Mesh");
+			selectedMeshFilePath = fileDialog->GetSelected().string();
+			bEnableSetMaterialWhenMeshLoad = true;
+			fileDialog->ClearSelected();
 		}
 	}
 }

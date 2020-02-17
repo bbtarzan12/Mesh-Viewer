@@ -2,10 +2,10 @@
 #include "Texture.h"
 #include "../Util/ShaderLoader.h"
 #include <imgui.h>
-#include <ImGuiFileDialog.h>
+#include <imfilebrowser.h>
 
 Material::Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames)
-	:textureNames(textureNames)
+	:textureNames(textureNames), fileDialog(std::make_shared<ImGui::FileBrowser>())
 {
 	shader = ShaderLoader::Load(vertShader, fragShader);
 	InitializeTextures();
@@ -124,7 +124,7 @@ GLuint Material::GetTextureID(const std::string& name) const
 
 	return textures.at(name)->GetID();
 }
-#include <iostream>
+
 void Material::InitializeTextures()
 {
 	glUseProgram(shader);
@@ -189,18 +189,17 @@ bool Material::DrawTexturePannel(const std::string& name, const glm::vec2& size)
 		ImGui::SameLine();
 		if (ImGui::Button("Load"))
 		{
-			ImGuiFileDialog::Instance()->OpenDialog(name, ("Load " + name + " Texture").c_str(), ".png\0", ".");
+			fileDialog->SetTitle("Load " + name);
+			fileDialog->SetTypeFilters({ ".png", ".jpg", ".bmp" });
+			fileDialog->Open();
 		}
 
-		if (ImGuiFileDialog::Instance()->FileDialog(name))
+		fileDialog->Display();
+		if (fileDialog->HasSelected())
 		{
-			if (ImGuiFileDialog::Instance()->IsOk)
-			{
-				std::string filePathName = ImGuiFileDialog::Instance()->GetFilepathName();
-
-				SetTexture(name, std::make_shared<Texture>(filePathName));
-			}
-			ImGuiFileDialog::Instance()->CloseDialog(name);
+			std::string filePathName = fileDialog->GetSelected().string();
+			SetTexture(name, std::make_shared<Texture>(filePathName));
+			fileDialog->ClearSelected();
 		}
 		return false;
 	}

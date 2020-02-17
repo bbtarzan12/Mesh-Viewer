@@ -82,9 +82,6 @@
     <ClCompile Include="Core\Texture.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Libraries\Imgui\ImGuiFileDialog.cpp">
-      <Filter>Libraries\Imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Lights\PointLight.cpp">
       <Filter>Lights</Filter>
     </ClCompile>
@@ -96,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="Lights\DirectionalLight.cpp">
       <Filter>Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Imgui\imfilebrowser.cpp">
+      <Filter>Libraries\Imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
