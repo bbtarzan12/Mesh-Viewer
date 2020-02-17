@@ -56,7 +56,7 @@ void main()
 
 	// Reflection (Ir)
 	vec3 Ir = reflect(-cameraTangentDirection, normal);
-	float FrIr = FresnelSchlickApproximation(IOR, normal, Ir);
+	float FrIr = FresnelSchlickApproximation(clamp(dot(cameraTangentDirection, normal), 0, 1), normal, Ir);
 	Ir = Ir * TBN; // Tangent To World space
 	vec3 cubeReflection = vec3(texture(cubeMapTexture, Ir)) * FrIr;
 
@@ -86,7 +86,7 @@ vec3 CalculateDirectionalLightSpecular(DirectionalLight light, vec2 uv, vec3 nor
 {
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), 32);
-	return light.color * light.power * spec * FresnelSchlickApproximation(IOR, normal, reflectDir);
+	return light.color * light.power * spec * FresnelSchlickApproximation(clamp(dot(lightDir, reflectDir), 0, 1), normal, reflectDir);
 }
 
 vec3 CalculatePointLightDiffuse(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, float attenuation)
@@ -99,7 +99,7 @@ vec3 CalculatePointLightSpecular(PointLight light, vec2 uv, vec3 normal, vec3 li
 {
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), 32);
-	return light.color * light.power * spec * attenuation * FresnelSchlickApproximation(IOR, normal, reflectDir);
+	return light.color * light.power * spec * attenuation * FresnelSchlickApproximation(clamp(dot(lightDir, reflectDir), 0, 1), normal, reflectDir);
 }
 
 float CalculateF0(float IOR)
