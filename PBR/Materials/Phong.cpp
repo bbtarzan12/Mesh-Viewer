@@ -6,6 +6,7 @@ Phong::Phong()
 	:uvScale(1, 1),
 	uvOffset(0, 0),
 	shininess(30),
+	useBlinnPhong(false),
 	Material
 	(
 		"Shaders/phong_vert.glsl", "Shaders/phong_frag.glsl",
@@ -20,6 +21,7 @@ void Phong::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4&
 	Material::Draw(model, view, projection);
 	glDepthFunc(GL_LESS);
 
+	SetInt("useBlinnPhong", useBlinnPhong);
 	SetInt("shininess", shininess);
 	SetVec2("uvOffset", uvOffset);
 	SetVec2("uvScale", uvScale);
@@ -30,6 +32,10 @@ void Phong::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4&
 
 void Phong::DrawUI()
 {
+	ImGui::Text("Use Blinn-Phong");
+	ImGui::SameLine();
+	ImGui::Checkbox("##Use Blinn-Phong", &useBlinnPhong);
+
 	ImGui::Text("UV Offset");
 	ImGui::SameLine();
 	ImGui::DragFloat2("##UV Offset", &uvOffset[0], 0.1f);

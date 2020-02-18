@@ -22,6 +22,7 @@ uniform vec3 cameraPosition_worldSpace;
 uniform vec2 uvOffset;
 uniform vec2 uvScale;
 uniform int shininess;
+uniform bool useBlinnPhong;
 
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[NUM_POINT_LIGHTS];
@@ -81,8 +82,18 @@ vec3 CalculateDirectionalLightDiffuse(DirectionalLight light, vec2 uv, vec3 norm
 
 vec3 CalculateDirectionalLightSpecular(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightDir, vec3 cameraTangentDirection)
 {
-	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), shininess);
+	float spec = 0;
+	vec3 reflectDir = vec3(0, 0, 0);
+	if (useBlinnPhong)
+	{
+		vec3 halfWayDir = normalize(lightDir + cameraTangentDirection);
+		spec = pow(clamp(dot(normal, halfWayDir), 0, 1), shininess);
+	}
+	else
+	{
+		vec3 reflectDir = reflect(-lightDir, normal);
+		spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), shininess);
+	}
 	return light.color * light.power * spec * FresnelSchlickApproximation(clamp(dot(lightDir, reflectDir), 0, 1), normal, reflectDir);
 }
 
@@ -94,8 +105,18 @@ vec3 CalculatePointLightDiffuse(PointLight light, vec2 uv, vec3 normal, vec3 lig
 
 vec3 CalculatePointLightSpecular(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, vec3 cameraTangentDirection, float attenuation)
 {
-	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), shininess);
+	float spec = 0;
+	vec3 reflectDir = vec3(0, 0, 0);
+	if (useBlinnPhong)
+	{
+		reflectDir = normalize(lightDir + cameraTangentDirection);
+		spec = pow(clamp(dot(normal, reflectDir), 0, 1), shininess);
+	}
+	else
+	{
+		reflectDir = reflect(-lightDir, normal);
+		spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), shininess);
+	}
 	return light.color * light.power * spec * attenuation * FresnelSchlickApproximation(clamp(dot(lightDir, reflectDir), 0, 1), normal, reflectDir);
 }
 

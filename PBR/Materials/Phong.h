@@ -13,5 +13,6 @@ private:
 	glm::vec2 uvScale;
 	glm::vec2 uvOffset;
 	int shininess;
+	bool useBlinnPhong;
 
 };
