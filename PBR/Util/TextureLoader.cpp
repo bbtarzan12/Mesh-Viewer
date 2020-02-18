@@ -3,23 +3,26 @@
 
 #include <FreeImage/FreeImage.h>
 
-void TextureLoader::Load(const std::string& filePath, GLuint& id, glm::ivec2& size, GLenum& type)
+void TextureLoader::Load(const std::string& filePath, GLuint& id, glm::ivec2& size, GLenum& type, const bool sRGB)
 {
 	FIBITMAP* image = LoadImage(filePath, size);
+
+	GLenum format = sRGB ? GL_SRGB : GL_RGB;
 
 	type = GL_TEXTURE_2D;
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+	glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
 
 	UnloadImage(image);
 }
 
-void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id, glm::ivec2& size, GLenum& type)
+void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id, glm::ivec2& size, GLenum& type, const bool sRGB)
 {
 	type = GL_TEXTURE_CUBE_MAP;
+	GLenum format = sRGB ? GL_SRGB : GL_RGB;
 
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
@@ -34,7 +37,7 @@ void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id, 
 		FIBITMAP* image = LoadImage(facesPath[i], size);
 		FreeImage_FlipHorizontal(image);
 		FreeImage_FlipVertical(image);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, size.x, size.y, 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, size.x, size.y, 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
 		UnloadImage(image);
 	}
 }

@@ -2,9 +2,13 @@
 #include "../Util/TextureLoader.h"
 
 
-Texture::Texture(const std::string& filePath)
+Texture::Texture(const std::string& filePath, const bool sRGB)
+	:sRGB(sRGB)
 {
-	TextureLoader::Load(filePath, id, size, type);
+	if (filePath.empty())
+		return;
+
+	TextureLoader::Load(filePath, id, size, type, sRGB);
 }
 
 Texture::~Texture()
@@ -25,4 +29,9 @@ const glm::ivec2& Texture::GetSize() const
 const GLenum& Texture::GetType() const
 {
 	return type;
+}
+
+const bool& Texture::GetsRGB() const
+{
+	return sRGB;
 }

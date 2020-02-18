@@ -97,8 +97,12 @@
     <ClCompile Include="Libraries\Imgui\imfilebrowser.cpp">
       <Filter>Libraries\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Materials\PBR.cpp" />
-    <ClCompile Include="Core\Light.cpp" />
+    <ClCompile Include="Materials\PBR.cpp">
+      <Filter>Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Light.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_vert.glsl">

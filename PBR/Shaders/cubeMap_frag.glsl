@@ -10,5 +10,5 @@ uniform TextureCube cubeMapTexture;
 
 void main()
 {
-	color = Sample(cubeMapTexture, UV);
+	color = GammaCorrection(Sample(cubeMapTexture, UV));
 }

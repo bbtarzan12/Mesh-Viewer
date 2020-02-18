@@ -11,8 +11,8 @@ struct FIBITMAP;
 class TextureLoader
 {
 public:
-	static void Load(const std::string& filePath, GLuint& id, glm::ivec2& size, GLenum& type);
-	static void Load(const std::vector<std::string>& facesPath, GLuint& id, glm::ivec2& size, GLenum& type);
+	static void Load(const std::string& filePath, GLuint& id, glm::ivec2& size, GLenum& type, const bool sRGB);
+	static void Load(const std::vector<std::string>& facesPath, GLuint& id, glm::ivec2& size, GLenum& type, const bool sRGB);
 
 private:
 	static FIBITMAP* LoadImage(const std::string& filePath, glm::ivec2& size);

@@ -8,7 +8,7 @@ in vec3 fragPosition_worldSpace;
 in vec3 fragPosition_tangentSpace;
 in vec3 cameraPosition_tangentSpace;
 in vec3 vertexNormal_tangentSpace;
-in vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
+in vec3 lightPositions_tangentSpace[NUM_LIGHTS];
 in mat3 TBN;
 
 out vec3 color;
@@ -23,7 +23,7 @@ uniform vec3 cameraPosition_worldSpace;
 uniform vec2 uvOffset;
 uniform vec2 uvScale;
 
-uniform Light lights[NUM_POINT_LIGHTS];
+uniform Light lights[NUM_LIGHTS];
 
 void main()
 {
@@ -44,7 +44,7 @@ void main()
 	vec3 Lo = vec3(0);
 
 	vec3 viewDir = normalize(cameraPosition_tangentSpace - fragPosition_tangentSpace);
-	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
+	for (int i = 0; i < NUM_LIGHTS; i++)
 	{
 		vec3 lightDir = lights[i].isDirectional ?
 			normalize(-lightPositions_tangentSpace[i]) :
@@ -73,7 +73,7 @@ void main()
 		Lo += (kD * albedo / PI + specular) * radiance * saturate(dot(normal, lightDir));
 	}
 
-	vec3 ambient = vec3(0.1) * albedo * ao;
+	vec3 ambient = vec3(0.03) * albedo * ao;
 
-	color = ambient + Lo;
+	color = GammaCorrection(ambient + Lo);
 }

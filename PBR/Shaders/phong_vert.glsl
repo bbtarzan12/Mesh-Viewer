@@ -12,7 +12,7 @@ out vec3 fragPosition_worldSpace;
 out vec3 fragPosition_tangentSpace;
 out vec3 cameraPosition_tangentSpace;
 out vec3 vertexNormal_tangentSpace;
-out vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
+out vec3 lightPositions_tangentSpace[NUM_LIGHTS];
 out mat3 TBN;
 
 uniform mat4 M;
@@ -21,7 +21,7 @@ uniform mat4 P;
 uniform vec3 lightPosition_worldSpace;
 uniform vec3 cameraPosition_worldSpace;
 
-uniform Light lights[NUM_POINT_LIGHTS];
+uniform Light lights[NUM_LIGHTS];
 
 void main()
 {
@@ -38,7 +38,7 @@ void main()
 	vertexNormal_tangentSpace = TBN * N;
 	fragPosition_tangentSpace = TBN * fragPosition_worldSpace;
 	cameraPosition_tangentSpace = TBN * cameraPosition_worldSpace;
-	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
+	for (int i = 0; i < NUM_LIGHTS; i++)
 	{
 		lightPositions_tangentSpace[i] = TBN * lights[i].position;
 	}

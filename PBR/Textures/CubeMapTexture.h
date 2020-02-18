@@ -6,6 +6,6 @@
 class CubeMapTexture : public Texture
 {
 public:
-	CubeMapTexture(const std::vector<std::string>& facesPath);
+	CubeMapTexture(const std::vector<std::string>& facesPath, const bool sRGB = false);
 	virtual ~CubeMapTexture() = default;
 };

@@ -43,15 +43,15 @@ void Renderer::Init()
 	// #Todo : CubeMap Mesh와 Material 생성과정 정리하기
 	std::vector<std::string> faces
 	{
-		"Images/Environment/left.jpg",
-		"Images/Environment/right.jpg",
-		"Images/Environment/top.jpg",
-		"Images/Environment/bottom.jpg",
-		"Images/Environment/front.jpg",
-		"Images/Environment/back.jpg"
+		"Images/Environment/nx.png",
+		"Images/Environment/px.png",
+		"Images/Environment/py.png",
+		"Images/Environment/ny.png",
+		"Images/Environment/pz.png",
+		"Images/Environment/nz.png"
 	};
 
-	std::shared_ptr<CubeMapTexture> cubeMapTexture = std::make_shared<CubeMapTexture>(faces);
+	std::shared_ptr<CubeMapTexture> cubeMapTexture = std::make_shared<CubeMapTexture>(faces, true);
 
 	std::shared_ptr<CubeMap> cubeMapMaterial = MaterialManager::Instance().CreateMaterial<CubeMap>("CubeMap");
 	cubeMapMaterial->SetTexture("cubeMapTexture", cubeMapTexture);
@@ -61,11 +61,16 @@ void Renderer::Init()
 	// #Todo : Material 제작 윈도우 만들기
 	std::shared_ptr<Phong> phongMaterial = MaterialManager::Instance().CreateMaterial<Phong>("Phong");
 	phongMaterial->SetTexture("cubeMapTexture", cubeMapTexture);
-	phongMaterial->SetTexture("diffuseTexture", std::make_shared<Texture>("Images/Stone_02_COLOR.png"));
+	phongMaterial->SetTexture("diffuseTexture", std::make_shared<Texture>("Images/Stone_02_COLOR.png", true));
 	phongMaterial->SetTexture("normalTexture", std::make_shared<Texture>("Images/Stone_02_NRM.png"));
 	phongMaterial->SetTexture("specularTexture", std::make_shared<Texture>("Images/Stone_02_SPEC.png"));
 
 	std::shared_ptr<PBR> pbrMaterial = MaterialManager::Instance().CreateMaterial<PBR>("PBR");
+	pbrMaterial->SetTexture("albedoTexture", std::make_shared<Texture>("Images/chipped-paint-metal-albedo.png", true));
+	pbrMaterial->SetTexture("normalTexture", std::make_shared<Texture>("Images/chipped-paint-metal-normal-dx.png"));
+	pbrMaterial->SetTexture("metallicTexture", std::make_shared<Texture>("Images/chipped-paint-metal-metal.png"));
+	pbrMaterial->SetTexture("roughnessTexture", std::make_shared<Texture>("Images/chipped-paint-metal-rough2.png"));
+	pbrMaterial->SetTexture("aoTexture", std::make_shared<Texture>("Images/chipped-paint-ao.png"));
 
 	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(0, -1, 0), glm::vec3(1, 1, 1), 1.0f);
 	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(13, 0, 0), glm::vec3(1, 1, 1), 10.0f);
@@ -73,10 +78,10 @@ void Renderer::Init()
 	std::shared_ptr<PointLight> light3 = std::make_shared<PointLight>(glm::vec3(13, 7, 0), glm::vec3(1, 1, 1), 10.0f);
 	std::shared_ptr<PointLight> light4 = std::make_shared<PointLight>(glm::vec3(13, 10, 6), glm::vec3(1, 1, 1), 10.0f);
 	lights.push_back(directionalLight);
-	//lights.push_back(light);
-	//lights.push_back(light2);
-	//lights.push_back(light3);
-	//lights.push_back(light4);
+	lights.push_back(light);
+	lights.push_back(light2);
+	lights.push_back(light3);
+	lights.push_back(light4);
 }
 
 void Renderer::SetCamera(const std::shared_ptr<Camera>& newCamera)

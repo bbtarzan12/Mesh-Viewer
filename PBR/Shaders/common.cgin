@@ -1,6 +1,7 @@
 const float PI = 3.1415926535897932384626433832795;
 
-const int NUM_POINT_LIGHTS = 4;
+const int NUM_LIGHTS = 8;
+const float GAMMA = 2.2;
 
 struct Light
 {
@@ -47,4 +48,16 @@ vec4 Sample(TextureCube t, vec3 UV)
 float saturate(float value)
 {
 	return clamp(value, 0, 1);
+}
+
+vec3 GammaCorrection(vec3 hdr)
+{
+	vec3 ldr = hdr / (1 + hdr);
+	return pow(ldr, vec3(1.0 / GAMMA));
+}
+
+vec4 GammaCorrection(vec4 hdr)
+{
+	vec4 ldr = hdr / (1 + hdr);
+	return pow(ldr, vec4(1.0 / GAMMA));
 }

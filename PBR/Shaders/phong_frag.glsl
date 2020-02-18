@@ -7,7 +7,7 @@ in vec3 fragPosition_worldSpace;
 in vec3 fragPosition_tangentSpace;
 in vec3 cameraPosition_tangentSpace;
 in vec3 vertexNormal_tangentSpace;
-in vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
+in vec3 lightPositions_tangentSpace[NUM_LIGHTS];
 in mat3 TBN;
 
 out vec3 color;
@@ -23,7 +23,7 @@ uniform vec2 uvScale;
 uniform int shininess;
 uniform bool useBlinnPhong;
 
-uniform Light lights[NUM_POINT_LIGHTS];
+uniform Light lights[NUM_LIGHTS];
 
 float CalculateF0(float IOR);
 float FresnelSchlickApproximation(float IOR, vec3 normal, vec3 v);
@@ -40,7 +40,7 @@ void main()
 	vec3 diffuseLight = vec3(0);
 	vec3 specularLight = vec3(0);
 	vec3 viewDir = normalize(cameraPosition_tangentSpace - fragPosition_tangentSpace);
-	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
+	for (int i = 0; i < NUM_LIGHTS; i++)
 	{
 		vec3 lightDir = lights[i].isDirectional ?
 			normalize(-lightPositions_tangentSpace[i]) :
@@ -77,9 +77,9 @@ void main()
 
 	vec3 specular = vec3(Sample(specularTexture, uv)) * (specularLight + cubeReflection);
 	vec3 diffuse = vec3(Sample(diffuseTexture, uv)) * diffuseLight;
-	vec3 ambient = vec3(Sample(diffuseTexture, uv)) * 0.1;
+	vec3 ambient = vec3(Sample(diffuseTexture, uv)) * 0.03;
 
-	color = diffuse + specular + ambient;
+	color = GammaCorrection(diffuse + specular + ambient);
 }
 
 float CalculateF0(float IOR)
