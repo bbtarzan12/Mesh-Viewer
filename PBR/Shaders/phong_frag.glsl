@@ -63,7 +63,7 @@ void main()
 
 	// Reflection
 	vec3 Ir = reflect(-cameraTangentDirection, normal);
-	float FrIr = FresnelSchlickApproximation(clamp(dot(cameraTangentDirection, normal), 0, 1), normal, Ir);
+	float FrIr = FresnelSchlickApproximation(saturate(dot(cameraTangentDirection, normal)), normal, Ir);
 	Ir = Ir * TBN; // Tangent To World space
 	vec3 cubeReflection = vec3(Sample(cubeMapTexture, Ir)) * FrIr;
 
@@ -76,7 +76,7 @@ void main()
 
 vec3 CalculateDirectionalLightDiffuse(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightDir)
 {
-	float diff = clamp(dot(normal, lightDir), 0, 1);
+	float diff = saturate(dot(normal, lightDir));
 	return light.color * light.power * diff;
 }
 
@@ -87,19 +87,19 @@ vec3 CalculateDirectionalLightSpecular(DirectionalLight light, vec2 uv, vec3 nor
 	if (useBlinnPhong)
 	{
 		vec3 halfWayDir = normalize(lightDir + cameraTangentDirection);
-		spec = pow(clamp(dot(normal, halfWayDir), 0, 1), shininess);
+		spec = pow(saturate(dot(normal, halfWayDir)), shininess);
 	}
 	else
 	{
 		vec3 reflectDir = reflect(-lightDir, normal);
-		spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), shininess);
+		spec = pow(saturate(dot(cameraTangentDirection, reflectDir)), shininess);
 	}
-	return light.color * light.power * spec * FresnelSchlickApproximation(clamp(dot(lightDir, reflectDir), 0, 1), normal, reflectDir);
+	return light.color * light.power * spec * FresnelSchlickApproximation(saturate(dot(lightDir, reflectDir)), normal, reflectDir);
 }
 
 vec3 CalculatePointLightDiffuse(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, float attenuation)
 {
-	float diff = clamp(dot(normal, lightDir), 0, 1);
+	float diff = saturate(dot(normal, lightDir));
 	return light.color * light.power * diff * attenuation;
 }
 
@@ -110,14 +110,14 @@ vec3 CalculatePointLightSpecular(PointLight light, vec2 uv, vec3 normal, vec3 li
 	if (useBlinnPhong)
 	{
 		reflectDir = normalize(lightDir + cameraTangentDirection);
-		spec = pow(clamp(dot(normal, reflectDir), 0, 1), shininess);
+		spec = pow(saturate(dot(normal, reflectDir)), shininess);
 	}
 	else
 	{
 		reflectDir = reflect(-lightDir, normal);
-		spec = pow(clamp(dot(cameraTangentDirection, reflectDir), 0, 1), shininess);
+		spec = pow(saturate(dot(cameraTangentDirection, reflectDir)), shininess);
 	}
-	return light.color * light.power * spec * attenuation * FresnelSchlickApproximation(clamp(dot(lightDir, reflectDir), 0, 1), normal, reflectDir);
+	return light.color * light.power * spec * attenuation * FresnelSchlickApproximation(saturate(dot(lightDir, reflectDir)), normal, reflectDir);
 }
 
 float CalculateF0(float IOR)
@@ -132,6 +132,6 @@ float CalculateF0(float IOR)
 float FresnelSchlickApproximation(float IOR, vec3 normal, vec3 l)
 {
 	float F0 = CalculateF0(IOR);
-	float NdotL = clamp(dot(normal, l), 0, 1);
+	float NdotL = saturate(dot(normal, l));
 	return F0 + (1.0 - F0) * pow(1.0 - NdotL, 5);
 }

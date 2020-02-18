@@ -54,6 +54,7 @@ void Phong::DrawUI()
 
 		ImGui::EndChild();
 	}
+
 	if (!DrawTexturePannel("normalTexture", { 300, 60 }))
 	{
 		ImGui::TextDisabled("Use Mesh Normal");

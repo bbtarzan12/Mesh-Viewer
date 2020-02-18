@@ -97,12 +97,10 @@
     <ClCompile Include="Libraries\Imgui\imfilebrowser.cpp">
       <Filter>Libraries\Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Materials\PBR.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_vert.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\phong_frag.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\phong_lights.cgin">
@@ -115,6 +113,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\common.cgin">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\pbr.cgin">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\phong_frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\pbr_frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\pbr_vert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -168,6 +178,9 @@
       <Filter>Textures</Filter>
     </ClInclude>
     <ClInclude Include="Materials\CubeMap.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\PBR.h">
       <Filter>Materials</Filter>
     </ClInclude>
   </ItemGroup>

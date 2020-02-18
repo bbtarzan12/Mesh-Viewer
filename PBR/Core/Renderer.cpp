@@ -5,6 +5,7 @@
 #include "../Managers/MaterialManager.h"
 #include "../Materials/CubeMap.h"
 #include "../Materials/Phong.h"
+#include "../Materials/PBR.h"
 #include "../Util/TextureLoader.h"
 #include "Texture.h"
 #include "../Textures/CubeMapTexture.h"
@@ -64,12 +65,18 @@ void Renderer::Init()
 	phongMaterial->SetTexture("normalTexture", std::make_shared<Texture>("Images/Stone_02_NRM.png"));
 	phongMaterial->SetTexture("specularTexture", std::make_shared<Texture>("Images/Stone_02_SPEC.png"));
 
+	std::shared_ptr<PBR> pbrMaterial = MaterialManager::Instance().CreateMaterial<PBR>("PBR");
+
 	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(0, -1, 0), glm::vec3(1, 1, 1), 1.0f);
-	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(7, 7, 7), glm::vec3(1, 1, 1), 50.0f);
-	std::shared_ptr<PointLight> light2 = std::make_shared<PointLight>(glm::vec3(-7, -7, -7), glm::vec3(1, 1, 1), 100.0f);
+	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(13, 0, 0), glm::vec3(1, 1, 1), 10.0f);
+	std::shared_ptr<PointLight> light2 = std::make_shared<PointLight>(glm::vec3(13, 0, 6), glm::vec3(1, 1, 1), 10.0f);
+	std::shared_ptr<PointLight> light3 = std::make_shared<PointLight>(glm::vec3(13, 7, 0), glm::vec3(1, 1, 1), 10.0f);
+	std::shared_ptr<PointLight> light4 = std::make_shared<PointLight>(glm::vec3(13, 10, 6), glm::vec3(1, 1, 1), 10.0f);
 	lights.push_back(directionalLight);
-	lights.push_back(light);
-	lights.push_back(light2);
+	//lights.push_back(light);
+	//lights.push_back(light2);
+	//lights.push_back(light3);
+	//lights.push_back(light4);
 }
 
 void Renderer::SetCamera(const std::shared_ptr<Camera>& newCamera)
@@ -108,7 +115,7 @@ void Renderer::Render(double deltaTime)
 		const std::shared_ptr<Material> material = mesh->GetMaterial();
 		for(int i = 0 ; i < lights.size(); i++)
 		{
-			lights[i]->Draw(material, i);
+			lights[i]->Draw(material, i - 1);
 		}
 
 		material->SetVec3("cameraPosition_worldSpace", camera->GetPosition());

@@ -1,3 +1,4 @@
+const float PI = 3.1415926535897932384626433832795;
 
 struct Texture2D
 {
@@ -31,4 +32,9 @@ vec4 Sample(TextureCube t, vec3 UV)
 	}
 
 	return t.defaultColor;
+}
+
+float saturate(float value)
+{
+	return clamp(value, 0, 1);
 }
