@@ -53,15 +53,14 @@ void main()
 		vec3 diffuse = lights[i].color * lights[i].power * diff * attenuation;
 
 		float spec = 0;
-		vec3 reflectDir = vec3(0, 0, 0);
+		vec3 reflectDir = reflect(-lightDir, normal);;
 		if (useBlinnPhong)
 		{
-			reflectDir = normalize(lightDir + viewDir);
-			spec = pow(saturate(dot(normal, reflectDir)), shininess);
+			vec3 halfDir = normalize(lightDir + viewDir);
+			spec = pow(saturate(dot(normal, halfDir)), shininess);
 		}
 		else
 		{
-			reflectDir = reflect(-lightDir, normal);
 			spec = pow(saturate(dot(viewDir, reflectDir)), shininess);
 		}
 		vec3 specular = lights[i].color * lights[i].power * spec * attenuation * FresnelSchlickApproximation(saturate(dot(lightDir, reflectDir)), normal, reflectDir);
