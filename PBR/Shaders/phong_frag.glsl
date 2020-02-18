@@ -1,14 +1,12 @@
 #version 430 core
 
 #include common.cgin
-#include phong_lights.cgin
 
 in vec2 UV;
 in vec3 fragPosition_worldSpace;
 in vec3 fragPosition_tangentSpace;
 in vec3 cameraPosition_tangentSpace;
 in vec3 vertexNormal_tangentSpace;
-in vec3 directionalLightDirection_tangentSpace;
 in vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
 in mat3 TBN;
 
@@ -18,20 +16,14 @@ uniform TextureCube cubeMapTexture;
 uniform Texture2D diffuseTexture;
 uniform Texture2D normalTexture;
 uniform Texture2D specularTexture;
+
 uniform vec3 cameraPosition_worldSpace;
 uniform vec2 uvOffset;
 uniform vec2 uvScale;
 uniform int shininess;
 uniform bool useBlinnPhong;
 
-uniform DirectionalLight directionalLight;
-uniform PointLight pointLights[NUM_POINT_LIGHTS];
-
-vec3 CalculateDirectionalLightDiffuse(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightTangentDirection);
-vec3 CalculateDirectionalLightSpecular(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightTangentDirection, vec3 cameraTangentDirection);
-
-vec3 CalculatePointLightDiffuse(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, float attenuation);
-vec3 CalculatePointLightSpecular(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, vec3 cameraTangentDirection, float attenuation);
+uniform Light lights[NUM_POINT_LIGHTS];
 
 float CalculateF0(float IOR);
 float FresnelSchlickApproximation(float IOR, vec3 normal, vec3 v);
@@ -44,26 +36,43 @@ void main()
 	{
 		normal = normalize((Sample(normalTexture, uv).rgb - 0.5) * 2.0);
 	}
-	
-	vec3 lightDir = normalize(-directionalLightDirection_tangentSpace);
-	vec3 cameraTangentDirection = normalize(cameraPosition_tangentSpace - fragPosition_tangentSpace);
 
-	vec3 diffuseLight = CalculateDirectionalLightDiffuse(directionalLight, uv, normal, lightDir);
-	vec3 specularLight = CalculateDirectionalLightSpecular(directionalLight, uv, normal, lightDir, cameraTangentDirection);
-
+	vec3 diffuseLight = vec3(0);
+	vec3 specularLight = vec3(0);
+	vec3 viewDir = normalize(cameraPosition_tangentSpace - fragPosition_tangentSpace);
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
 	{
-		float distance = length(pointLights[i].position - fragPosition_worldSpace);
-		float attenuation = 1.0 / (distance * distance);
+		vec3 lightDir = lights[i].isDirectional ?
+			normalize(-lightPositions_tangentSpace[i]) :
+			normalize(lightPositions_tangentSpace[i] - fragPosition_tangentSpace);
 
-		lightDir = normalize(lightPositions_tangentSpace[i] - fragPosition_tangentSpace);
-		diffuseLight += CalculatePointLightDiffuse(pointLights[i], uv, normal, lightDir, attenuation);
-		specularLight += CalculatePointLightSpecular(pointLights[i], uv, normal, lightDir, cameraTangentDirection, attenuation);
+		float distance = length(lights[i].position - fragPosition_worldSpace);
+		float attenuation = lights[i].isDirectional ? 1.0 : 1.0 / (distance * distance);
+
+		float diff = saturate(dot(normal, lightDir));
+		vec3 diffuse = lights[i].color * lights[i].power * diff * attenuation;
+
+		float spec = 0;
+		vec3 reflectDir = vec3(0, 0, 0);
+		if (useBlinnPhong)
+		{
+			reflectDir = normalize(lightDir + viewDir);
+			spec = pow(saturate(dot(normal, reflectDir)), shininess);
+		}
+		else
+		{
+			reflectDir = reflect(-lightDir, normal);
+			spec = pow(saturate(dot(viewDir, reflectDir)), shininess);
+		}
+		vec3 specular = lights[i].color * lights[i].power * spec * attenuation * FresnelSchlickApproximation(saturate(dot(lightDir, reflectDir)), normal, reflectDir);
+
+		diffuseLight += diffuse;
+		specularLight += specular;
 	}
 
 	// Reflection
-	vec3 Ir = reflect(-cameraTangentDirection, normal);
-	float FrIr = FresnelSchlickApproximation(saturate(dot(cameraTangentDirection, normal)), normal, Ir);
+	vec3 Ir = reflect(-viewDir, normal);
+	float FrIr = FresnelSchlickApproximation(saturate(dot(viewDir, normal)), normal, Ir);
 	Ir = Ir * TBN; // Tangent To World space
 	vec3 cubeReflection = vec3(Sample(cubeMapTexture, Ir)) * FrIr;
 
@@ -72,52 +81,6 @@ void main()
 	vec3 ambient = vec3(Sample(diffuseTexture, uv)) * 0.1;
 
 	color = diffuse + specular + ambient;
-}
-
-vec3 CalculateDirectionalLightDiffuse(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightDir)
-{
-	float diff = saturate(dot(normal, lightDir));
-	return light.color * light.power * diff;
-}
-
-vec3 CalculateDirectionalLightSpecular(DirectionalLight light, vec2 uv, vec3 normal, vec3 lightDir, vec3 cameraTangentDirection)
-{
-	float spec = 0;
-	vec3 reflectDir = vec3(0, 0, 0);
-	if (useBlinnPhong)
-	{
-		vec3 halfWayDir = normalize(lightDir + cameraTangentDirection);
-		spec = pow(saturate(dot(normal, halfWayDir)), shininess);
-	}
-	else
-	{
-		vec3 reflectDir = reflect(-lightDir, normal);
-		spec = pow(saturate(dot(cameraTangentDirection, reflectDir)), shininess);
-	}
-	return light.color * light.power * spec * FresnelSchlickApproximation(saturate(dot(lightDir, reflectDir)), normal, reflectDir);
-}
-
-vec3 CalculatePointLightDiffuse(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, float attenuation)
-{
-	float diff = saturate(dot(normal, lightDir));
-	return light.color * light.power * diff * attenuation;
-}
-
-vec3 CalculatePointLightSpecular(PointLight light, vec2 uv, vec3 normal, vec3 lightDir, vec3 cameraTangentDirection, float attenuation)
-{
-	float spec = 0;
-	vec3 reflectDir = vec3(0, 0, 0);
-	if (useBlinnPhong)
-	{
-		reflectDir = normalize(lightDir + cameraTangentDirection);
-		spec = pow(saturate(dot(normal, reflectDir)), shininess);
-	}
-	else
-	{
-		reflectDir = reflect(-lightDir, normal);
-		spec = pow(saturate(dot(cameraTangentDirection, reflectDir)), shininess);
-	}
-	return light.color * light.power * spec * attenuation * FresnelSchlickApproximation(saturate(dot(lightDir, reflectDir)), normal, reflectDir);
 }
 
 float CalculateF0(float IOR)

@@ -115,7 +115,7 @@ void Renderer::Render(double deltaTime)
 		const std::shared_ptr<Material> material = mesh->GetMaterial();
 		for(int i = 0 ; i < lights.size(); i++)
 		{
-			lights[i]->Draw(material, i - 1);
+			lights[i]->Draw(material, i);
 		}
 
 		material->SetVec3("cameraPosition_worldSpace", camera->GetPosition());

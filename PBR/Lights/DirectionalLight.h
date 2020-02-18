@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Core/Light.h"
-#include <glm/glm.hpp>
+
 
 class DirectionalLight : public Light
 {
@@ -10,9 +10,4 @@ public:
 	virtual ~DirectionalLight() = default;
 
 	virtual void Draw(const std::shared_ptr<Material> material, int index = 0) const override;
-
-private:
-	glm::vec3 direction;
-	glm::vec3 color;
-	float power;
 };

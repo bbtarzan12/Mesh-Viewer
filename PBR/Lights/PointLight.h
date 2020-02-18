@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Core/Light.h"
-#include <glm/glm.hpp>
 
 class PointLight : public Light
 {
@@ -11,10 +10,5 @@ public:
 	virtual ~PointLight() = default;
 
 	virtual void Draw(const std::shared_ptr<Material> material, int index = 0) const override;
-
-private:
-	glm::vec3 position;
-	glm::vec3 color;
-	float power;
 
 };

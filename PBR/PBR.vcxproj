@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\Camera.cpp" />
+    <ClCompile Include="Core\Light.cpp" />
     <ClCompile Include="Core\Material.cpp" />
     <ClCompile Include="Core\Mesh.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />

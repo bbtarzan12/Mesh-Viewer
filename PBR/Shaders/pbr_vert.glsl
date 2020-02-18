@@ -5,13 +5,12 @@ layout(location = 1) in vec3 vertexNormal_modelSpace;
 layout(location = 2) in vec2 vertexUV;
 layout(location = 3) in vec3 tangent_modelSpace;
 
-#include phong_lights.cgin
+#include common.cgin
 
 out vec2 UV;
 out vec3 fragPosition_worldSpace;
 out vec3 fragPosition_tangentSpace;
 out vec3 cameraPosition_tangentSpace;
-out vec3 directionalLightDirection_tangentSpace;
 out vec3 vertexNormal_tangentSpace;
 out vec3 lightPositions_tangentSpace[NUM_POINT_LIGHTS];
 out mat3 TBN;
@@ -22,8 +21,7 @@ uniform mat4 P;
 uniform vec3 lightPosition_worldSpace;
 uniform vec3 cameraPosition_worldSpace;
 
-uniform DirectionalLight directionalLight;
-uniform PointLight pointLights[NUM_POINT_LIGHTS];
+uniform Light lights[NUM_POINT_LIGHTS];
 
 void main()
 {
@@ -40,10 +38,9 @@ void main()
 	vertexNormal_tangentSpace = TBN * N;
 	fragPosition_tangentSpace = TBN * fragPosition_worldSpace;
 	cameraPosition_tangentSpace = TBN * cameraPosition_worldSpace;
-	directionalLightDirection_tangentSpace = normalize(TBN * directionalLight.direction);
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
 	{
-		lightPositions_tangentSpace[i] = TBN * pointLights[i].position;
+		lightPositions_tangentSpace[i] = TBN * lights[i].position;
 	}
 
 	gl_Position = P * V * M * vec4(vertexPosition_modelSpace, 1.0);

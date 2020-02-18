@@ -98,6 +98,7 @@
       <Filter>Libraries\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="Materials\PBR.cpp" />
+    <ClCompile Include="Core\Light.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_vert.glsl">

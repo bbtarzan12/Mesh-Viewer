@@ -1,5 +1,15 @@
 const float PI = 3.1415926535897932384626433832795;
 
+const int NUM_POINT_LIGHTS = 4;
+
+struct Light
+{
+	vec3 position;
+	vec3 color;
+	float power;
+	bool isDirectional;
+};
+
 struct Texture2D
 {
 	sampler2D texture;
