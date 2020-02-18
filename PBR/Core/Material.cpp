@@ -17,6 +17,20 @@ void Material::Draw(const glm::mat4& model, const glm::mat4& view, const glm::ma
 	AttachTextures();
 }
 
+void Material::SetInt(const std::string& name, const int value) const
+{
+	glUseProgram(shader);
+	GLuint id = glGetUniformLocation(shader, name.c_str());
+
+	if (id == -1)
+		return;
+
+	glUniform1i(id, value);
+
+	if (!CheckCurrentShader())
+		glUseProgram(0);
+}
+
 void Material::SetVec2(const std::string& name, const glm::vec2& value) const
 {
 	glUseProgram(shader);

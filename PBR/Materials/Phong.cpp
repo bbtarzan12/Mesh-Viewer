@@ -5,6 +5,7 @@
 Phong::Phong()
 	:uvScale(1, 1),
 	uvOffset(0, 0),
+	shininess(30),
 	Material
 	(
 		"Shaders/phong_vert.glsl", "Shaders/phong_frag.glsl",
@@ -19,6 +20,7 @@ void Phong::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4&
 	Material::Draw(model, view, projection);
 	glDepthFunc(GL_LESS);
 
+	SetInt("shininess", shininess);
 	SetVec2("uvOffset", uvOffset);
 	SetVec2("uvScale", uvScale);
 	SetMat4("M", model);
@@ -35,6 +37,10 @@ void Phong::DrawUI()
 	ImGui::Text("UV Scale");
 	ImGui::SameLine();
 	ImGui::DragFloat2("##UV Scale", &uvScale[0], 0.1f);
+
+	ImGui::Text("Shininess");
+	ImGui::SameLine();
+	ImGui::DragInt("##Shininess", &shininess, 1.0f, 1, 100);
 
 	if (!DrawTexturePannel("diffuseTexture", {300, 300}))
 	{
