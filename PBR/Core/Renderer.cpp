@@ -1,12 +1,15 @@
 #include "Renderer.h"
 #include "../Managers/GLFWManager.h"
+#include "../Managers/MaterialManager.h"
+#include "../Managers/TextureManager.h"
 #include "../Core/Camera.h"
 #include "../Core/Mesh.h"
-#include "../Managers/MaterialManager.h"
 #include "../Materials/CubeMap.h"
 #include "../Materials/Phong.h"
 #include "../Materials/PBR.h"
+#include "../Materials/CubeMapCapture.h"
 #include "../Util/TextureLoader.h"
+#include "FrameBuffer.h"
 #include "Texture.h"
 #include "../Textures/CubeMapTexture.h"
 #include "../Lights/PointLight.h"
@@ -40,6 +43,17 @@ void Renderer::Init()
 {
 	GLFWManager::Instance().Init(rendererOption.width, rendererOption.height, "PBR", this);
 
+	{
+		glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+		glfwSwapInterval(1); // vSync
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_MULTISAMPLE);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	}
+
+
 	// #Todo : CubeMap Mesh와 Material 생성과정 정리하기
 	std::vector<std::string> faces
 	{
@@ -51,26 +65,42 @@ void Renderer::Init()
 		"Images/Environment/nz.png"
 	};
 
-	std::shared_ptr<CubeMapTexture> cubeMapTexture = std::make_shared<CubeMapTexture>(faces, true);
+	TextureManager::Instance().LoadTexture<CubeMapTexture>("CubeMap", faces, true);
+	TextureManager::Instance().CreateTexture<CubeMapTexture>("IrradianceMap", GL_RGB16F, GL_FLOAT, glm::ivec2{32, 32});
+
+	std::shared_ptr<CubeMapCapture> cubeMapCaptureMaterial = MaterialManager::Instance().CreateMaterial<CubeMapCapture>("CubeMapCapture");
+
+	FrameBuffer frameBuffer({ 32, 32 });
+	frameBuffer.Capture(TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"), TextureManager::Instance().GetTexture<CubeMapTexture>("IrradianceMap"), cubeMapCaptureMaterial);
+
+	TextureManager::Instance().LoadTexture<Texture>("Stone_Diffuse", "Images/Stone_02_COLOR.png", true);
+	TextureManager::Instance().LoadTexture<Texture>("Stone_Normal", "Images/Stone_02_NRM.png");
+	TextureManager::Instance().LoadTexture<Texture>("Stone_Specular", "Images/Stone_02_SPEC.png");
+	TextureManager::Instance().LoadTexture<Texture>("Metal_Albedo", "Images/chipped-paint-metal-albedo.png", true);
+	TextureManager::Instance().LoadTexture<Texture>("Metal_Normal", "Images/chipped-paint-metal-normal-dx.png");
+	TextureManager::Instance().LoadTexture<Texture>("Metal_Metallic", "Images/chipped-paint-metal-metal.png");
+	TextureManager::Instance().LoadTexture<Texture>("Metal_Roughness", "Images/chipped-paint-metal-rough2.png");
+	TextureManager::Instance().LoadTexture<Texture>("Metal_AO", "Images/chipped-paint-ao.png");
 
 	std::shared_ptr<CubeMap> cubeMapMaterial = MaterialManager::Instance().CreateMaterial<CubeMap>("CubeMap");
-	cubeMapMaterial->SetTexture("cubeMapTexture", cubeMapTexture);
+	cubeMapMaterial->SetTexture("cubeMapTexture", TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"));
 
 	LoadMesh("Meshes/skybox.obj", "CubeMap");
 
 	// #Todo : Material 제작 윈도우 만들기
 	std::shared_ptr<Phong> phongMaterial = MaterialManager::Instance().CreateMaterial<Phong>("Phong");
-	phongMaterial->SetTexture("cubeMapTexture", cubeMapTexture);
-	phongMaterial->SetTexture("diffuseTexture", std::make_shared<Texture>("Images/Stone_02_COLOR.png", true));
-	phongMaterial->SetTexture("normalTexture", std::make_shared<Texture>("Images/Stone_02_NRM.png"));
-	phongMaterial->SetTexture("specularTexture", std::make_shared<Texture>("Images/Stone_02_SPEC.png"));
+	phongMaterial->SetTexture("cubeMapTexture", TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"));
+	phongMaterial->SetTexture("diffuseTexture", TextureManager::Instance().GetTexture<Texture>("Stone_Diffuse"));
+	phongMaterial->SetTexture("normalTexture", TextureManager::Instance().GetTexture<Texture>("Stone_Normal"));
+	phongMaterial->SetTexture("specularTexture", TextureManager::Instance().GetTexture<Texture>("Stone_Specular"));
 
 	std::shared_ptr<PBR> pbrMaterial = MaterialManager::Instance().CreateMaterial<PBR>("PBR");
-	pbrMaterial->SetTexture("albedoTexture", std::make_shared<Texture>("Images/chipped-paint-metal-albedo.png", true));
-	pbrMaterial->SetTexture("normalTexture", std::make_shared<Texture>("Images/chipped-paint-metal-normal-dx.png"));
-	pbrMaterial->SetTexture("metallicTexture", std::make_shared<Texture>("Images/chipped-paint-metal-metal.png"));
-	pbrMaterial->SetTexture("roughnessTexture", std::make_shared<Texture>("Images/chipped-paint-metal-rough2.png"));
-	pbrMaterial->SetTexture("aoTexture", std::make_shared<Texture>("Images/chipped-paint-ao.png"));
+	pbrMaterial->SetTexture("irradianceMapTexture", TextureManager::Instance().GetTexture<Texture>("IrradianceMap"));
+	pbrMaterial->SetTexture("albedoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Albedo"));
+	pbrMaterial->SetTexture("normalTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Normal"));
+	pbrMaterial->SetTexture("metallicTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Metallic"));
+	pbrMaterial->SetTexture("roughnessTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Roughness"));
+	pbrMaterial->SetTexture("aoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_AO"));
 
 	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(0, -1, 0), glm::vec3(1, 1, 1), 1.0f);
 	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(13, 0, 0), glm::vec3(1, 1, 1), 10.0f);
@@ -113,11 +143,13 @@ void Renderer::Release()
 
 void Renderer::Render(double deltaTime)
 {
+	glViewport(0, 0, rendererOption.width, rendererOption.height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	for (auto& mesh : meshes)
 	{
 		const std::shared_ptr<Material> material = mesh->GetMaterial();
+		material->Use();
 		for(int i = 0 ; i < lights.size(); i++)
 		{
 			lights[i]->Draw(material, i);

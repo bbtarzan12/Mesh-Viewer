@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\Camera.cpp" />
+    <ClCompile Include="Core\FrameBuffer.cpp" />
     <ClCompile Include="Core\Light.cpp" />
     <ClCompile Include="Core\Material.cpp" />
     <ClCompile Include="Core\Mesh.cpp" />
@@ -152,16 +153,22 @@
     <ClCompile Include="Lights\PointLight.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Managers\GLFWManager.cpp" />
+    <ClCompile Include="Managers\MaterialManager.cpp" />
+    <ClCompile Include="Managers\TextureManager.cpp" />
     <ClCompile Include="Materials\CubeMap.cpp" />
+    <ClCompile Include="Materials\CubeMapCapture.cpp" />
     <ClCompile Include="Materials\PBR.cpp" />
     <ClCompile Include="Materials\Phong.cpp" />
     <ClCompile Include="Textures\CubeMapTexture.cpp" />
+    <ClCompile Include="Util\DrawHelper.cpp" />
     <ClCompile Include="Util\MeshLoader.cpp" />
     <ClCompile Include="Util\ShaderLoader.cpp" />
     <ClCompile Include="Util\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\common.cgin" />
+    <None Include="Shaders\cubeMapCapture_frag.glsl" />
+    <None Include="Shaders\cubeMapCapture_vert.glsl" />
     <None Include="Shaders\cubeMap_frag.glsl" />
     <None Include="Shaders\cubeMap_vert.glsl" />
     <None Include="Shaders\pbr.cgin" />
@@ -173,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="Core\FrameBuffer.h" />
     <ClInclude Include="Core\Light.h" />
     <ClInclude Include="Core\Material.h" />
     <ClInclude Include="Core\Mesh.h" />
@@ -183,10 +191,13 @@
     <ClInclude Include="Lights\PointLight.h" />
     <ClInclude Include="Managers\GLFWManager.h" />
     <ClInclude Include="Managers\MaterialManager.h" />
+    <ClInclude Include="Managers\TextureManager.h" />
     <ClInclude Include="Materials\CubeMap.h" />
+    <ClInclude Include="Materials\CubeMapCapture.h" />
     <ClInclude Include="Materials\PBR.h" />
     <ClInclude Include="Materials\Phong.h" />
     <ClInclude Include="Textures\CubeMapTexture.h" />
+    <ClInclude Include="Util\DrawHelper.h" />
     <ClInclude Include="Util\MeshLoader.h" />
     <ClInclude Include="Util\ShaderLoader.h" />
     <ClInclude Include="Util\TextureLoader.h" />

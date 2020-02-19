@@ -13,6 +13,7 @@ in mat3 TBN;
 
 out vec3 color;
 
+uniform TextureCube irradianceMapTexture;
 uniform Texture2D albedoTexture;
 uniform Texture2D normalTexture;
 uniform Texture2D metallicTexture;
@@ -73,7 +74,12 @@ void main()
 		Lo += (kD * albedo / PI + specular) * radiance * saturate(dot(normal, lightDir));
 	}
 
-	vec3 ambient = vec3(0.03) * albedo * ao;
+	vec3 kS = FresnelSchlickApproximationWithRoughness(F0, viewDir, normal, roughness);
+	vec3 kD = vec3(1.0) - kS;
+	kD *= 1.0 - metallic;
+	vec3 irradiance = Sample(irradianceMapTexture, normal * TBN).rgb;
+	vec3 diffuse = irradiance * albedo;
+	vec3 ambient = (kD * diffuse) * ao;
 
 	color = GammaCorrection(ambient + Lo);
 }

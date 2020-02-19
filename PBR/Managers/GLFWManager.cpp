@@ -66,14 +66,6 @@ void GLFWManager::Init(int width, int height, const char* name, void* renderer)
 	cout << "[OpenGL] Vendor: " << glGetString(GL_VENDOR) << endl;
 	cout << "[OpenGL] Renderer: " << glGetString(GL_RENDERER) << endl;
 
-	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-	glfwSwapInterval(1); // vSync
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();

@@ -8,6 +8,7 @@ class Texture
 {
 public:
 	Texture(const std::string& filePath, const bool sRGB = false);
+	Texture(const GLenum& internalformat, const GLenum& dataType, const glm::ivec2& size, const bool sRGB = false);
 	virtual ~Texture();
 
 	const GLuint& GetID() const;
@@ -16,6 +17,7 @@ public:
 	const bool& GetsRGB() const;
 
 protected:
+	Texture(const glm::ivec2& size, const GLenum& type, const bool& sRGB = false);
 	Texture() = default;
 
 protected:

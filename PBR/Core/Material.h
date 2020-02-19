@@ -16,6 +16,7 @@ public:
 	Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames);
 	virtual ~Material() = default;
 
+	virtual void Use() const;
 	virtual void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const;
 	virtual void DrawUI() = 0;
 
@@ -28,9 +29,10 @@ public:
 	void SetBool(const std::string& name, const bool value) const;
 	void SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
 
-protected:
 	glm::ivec2 GetTextureSize(const std::string& name) const;
 	GLuint GetTextureID(const std::string& name) const;
+
+protected:
 
 	void InitializeTextures();
 	void AttachTextures() const;

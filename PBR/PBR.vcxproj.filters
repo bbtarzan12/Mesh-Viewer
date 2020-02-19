@@ -103,6 +103,21 @@
     <ClCompile Include="Core\Light.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Managers\TextureManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\MaterialManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\FrameBuffer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\DrawHelper.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\CubeMapCapture.cpp">
+      <Filter>Materials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_vert.glsl">
@@ -130,6 +145,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\pbr_vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\cubeMapCapture_frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\cubeMapCapture_vert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -186,6 +207,18 @@
       <Filter>Materials</Filter>
     </ClInclude>
     <ClInclude Include="Materials\PBR.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\TextureManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\FrameBuffer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\DrawHelper.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\CubeMapCapture.h">
       <Filter>Materials</Filter>
     </ClInclude>
   </ItemGroup>

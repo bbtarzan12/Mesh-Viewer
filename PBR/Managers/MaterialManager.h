@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include "../Core/SingletonManager.h"
 
 class MaterialManager : public SingletonManager<MaterialManager>
 {
@@ -35,20 +36,4 @@ std::shared_ptr<T> MaterialManager::CreateMaterial(const std::string& name)
 	materials.insert(std::make_pair(name, material));
 
 	return material;
-}
-
-std::shared_ptr<Material> MaterialManager::GetMaterial(const std::string& name)
-{
-	assert(materials.find(name) != materials.end());
-	return materials[name];
-}
-
-int MaterialManager::NumMaterials() const
-{
-	return materials.size();
-}
-
-const std::map<std::string, std::shared_ptr<Material>>& MaterialManager::GetMaterials() const
-{
-	return materials;
 }

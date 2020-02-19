@@ -11,6 +11,18 @@ Texture::Texture(const std::string& filePath, const bool sRGB)
 	TextureLoader::Load(filePath, id, size, type, sRGB);
 }
 
+Texture::Texture(const GLenum& internalformat, const GLenum& dataType, const glm::ivec2& size, const bool sRGB)
+	:sRGB(sRGB), size(size)
+{
+	TextureLoader::Create(type, internalformat, dataType, id, size, sRGB);
+}
+
+Texture::Texture(const glm::ivec2& size, const GLenum& type, const bool& sRGB)
+	:size(size), type(type), sRGB(sRGB)
+{
+
+}
+
 Texture::~Texture()
 {
 	glDeleteTextures(1, &id);

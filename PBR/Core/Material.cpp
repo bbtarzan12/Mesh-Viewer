@@ -3,6 +3,7 @@
 #include "../Util/ShaderLoader.h"
 #include <imgui.h>
 #include <imfilebrowser.h>
+#include "../Managers/TextureManager.h"
 
 Material::Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames)
 	:textureNames(textureNames), fileDialog(std::make_shared<ImGui::FileBrowser>())
@@ -11,10 +12,15 @@ Material::Material(const std::string& vertShader, const std::string& fragShader,
 	InitializeTextures();
 }
 
-void Material::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const
+void Material::Use() const
 {
 	glUseProgram(shader);
 	AttachTextures();
+}
+
+void Material::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const
+{
+
 }
 
 void Material::SetInt(const std::string& name, const int value) const
@@ -145,8 +151,8 @@ void Material::InitializeTextures()
 
 	for (int i = 0; i < textureNames.size(); i++)
 	{
-		GLuint textureID = glGetUniformLocation(shader, (textureNames[i] + ".texture").c_str());
-		glUniform1i(textureID, i);
+		GLuint uniformID = glGetUniformLocation(shader, (textureNames[i] + ".texture").c_str());
+		glUniform1i(uniformID, i);
 		defaultColors.emplace_back(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
@@ -211,8 +217,9 @@ bool Material::DrawTexturePannel(const std::string& name, const glm::vec2& size)
 		fileDialog->Display();
 		if (fileDialog->HasSelected())
 		{
-			std::string filePathName = fileDialog->GetSelected().string();
-			SetTexture(name, std::make_shared<Texture>(filePathName));
+			const std::string& filePathName = fileDialog->GetSelected().string();
+			const std::string& fileName = fileDialog->GetSelected().filename().string();
+			SetTexture(name, TextureManager::Instance().LoadTexture<Texture>(fileName, filePathName));
 			fileDialog->ClearSelected();
 		}
 		return false;
