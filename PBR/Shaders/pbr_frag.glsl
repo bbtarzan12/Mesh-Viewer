@@ -43,7 +43,7 @@ void main()
 	float roughness = Sample(roughnessTexture, uv).r;
 	float ao = Sample(aoTexture, uv).r;
 
-	vec3 F0 = vec3(0.03);
+	vec3 F0 = vec3(0.04);
 	F0 = mix(F0, albedo, metallic);
 	vec3 Lo = vec3(0);
 
