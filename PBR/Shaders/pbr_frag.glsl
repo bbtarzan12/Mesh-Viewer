@@ -15,6 +15,7 @@ out vec3 color;
 
 uniform TextureCube irradianceMapTexture;
 uniform TextureCube preFilterSpecularMapTexture;
+uniform Texture2D brdfSpecularMapTexture;
 uniform Texture2D albedoTexture;
 uniform Texture2D normalTexture;
 uniform Texture2D metallicTexture;
@@ -29,6 +30,7 @@ uniform Light lights[NUM_LIGHTS];
 
 void main()
 {
+
 	vec2 uv = vec2(UV.x * uvScale.x, UV.y * uvScale.y) + uvOffset;
 	vec3 normal = normalize(vertexNormal_tangentSpace);
 	if (normalTexture.use)
@@ -87,8 +89,10 @@ void main()
 
 	const float MAX_REFLECTION_LOD = 5.0 - 1.0;
 	vec3 prefilteredColor = SampleLod(preFilterSpecularMapTexture, reflectDir * TBN, roughness * MAX_REFLECTION_LOD).rgb;
+	vec2 brdf = Sample(brdfSpecularMapTexture, vec2(saturate(dot(normal, viewDir)), roughness)).rg;
+	vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-	vec3 ambient = (kD * diffuse + prefilteredColor) * ao;
+	vec3 ambient = (kD * diffuse + specular) * ao;
 
 	color = GammaCorrection(ambient + Lo);
 }

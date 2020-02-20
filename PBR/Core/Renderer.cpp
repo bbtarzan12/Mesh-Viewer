@@ -8,6 +8,7 @@
 #include "../Materials/Phong.h"
 #include "../Materials/PBR.h"
 #include "../Materials/CubeMapCapture.h"
+#include "../Materials/BRDFMapCapture.h"
 #include "../Util/TextureLoader.h"
 #include "FrameBuffer.h"
 #include "Texture.h"
@@ -68,14 +69,18 @@ void Renderer::Init()
 	TextureManager::Instance().LoadTexture<CubeMapTexture>("CubeMap", faces, true);
 	TextureManager::Instance().CreateTexture<CubeMapTexture>("IrradianceMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 32, 32 });
 	TextureManager::Instance().CreateTexture<CubeMapTexture>("PreFilterMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 128, 128 }, true);
+	TextureManager::Instance().CreateTexture<Texture>("BRDFMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 512, 512 });
 
 	std::shared_ptr<CubeMapCapture> cubeMapCaptureMaterial = MaterialManager::Instance().CreateMaterial<CubeMapCapture>("CubeMapCapture");
+	std::shared_ptr<BRDFMapCapture> brdfMapCaptureMaterial = MaterialManager::Instance().CreateMaterial<BRDFMapCapture>("BRDFMapCapture");
 
 	FrameBuffer frameBuffer({ 32, 32 });
 	frameBuffer.CaptureIrradianceMap(TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"), TextureManager::Instance().GetTexture<CubeMapTexture>("IrradianceMap"), cubeMapCaptureMaterial);
 
 	cubeMapCaptureMaterial->SetShader("Shaders/capturePreFilterSpecularMap_vert.glsl", "Shaders/capturePreFilterSpecularMap_frag.glsl");
 	frameBuffer.CapturePreFilterMap(TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"), TextureManager::Instance().GetTexture<CubeMapTexture>("PreFilterMap"), cubeMapCaptureMaterial, 5);
+
+	frameBuffer.Capture(TextureManager::Instance().GetTexture<Texture>("BRDFMap"), brdfMapCaptureMaterial);
 
 	TextureManager::Instance().LoadTexture<Texture>("Stone_Diffuse", "Images/Stone_02_COLOR.png", true);
 	TextureManager::Instance().LoadTexture<Texture>("Stone_Normal", "Images/Stone_02_NRM.png");
@@ -101,6 +106,7 @@ void Renderer::Init()
 	std::shared_ptr<PBR> pbrMaterial = MaterialManager::Instance().CreateMaterial<PBR>("PBR");
 	pbrMaterial->SetTexture("irradianceMapTexture", TextureManager::Instance().GetTexture<Texture>("IrradianceMap"));
 	pbrMaterial->SetTexture("preFilterSpecularMapTexture", TextureManager::Instance().GetTexture<Texture>("PreFilterMap"));
+	pbrMaterial->SetTexture("brdfSpecularMapTexture", TextureManager::Instance().GetTexture<Texture>("BRDFMap"));
 	pbrMaterial->SetTexture("albedoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Albedo"));
 	pbrMaterial->SetTexture("normalTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Normal"));
 	pbrMaterial->SetTexture("metallicTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Metallic"));

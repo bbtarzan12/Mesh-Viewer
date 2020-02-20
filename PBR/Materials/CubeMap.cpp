@@ -22,8 +22,3 @@ void CubeMap::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat
 	SetMat4("V", newView);
 	SetMat4("P", projection);
 }
-
-void CubeMap::DrawUI()
-{
-
-}

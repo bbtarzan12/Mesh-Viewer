@@ -155,6 +155,7 @@
     <ClCompile Include="Managers\GLFWManager.cpp" />
     <ClCompile Include="Managers\MaterialManager.cpp" />
     <ClCompile Include="Managers\TextureManager.cpp" />
+    <ClCompile Include="Materials\BRDFMapCapture.cpp" />
     <ClCompile Include="Materials\CubeMap.cpp" />
     <ClCompile Include="Materials\CubeMapCapture.cpp" />
     <ClCompile Include="Materials\PBR.cpp" />
@@ -166,6 +167,8 @@
     <ClCompile Include="Util\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\captureBRDFSpecularMap_frag.glsl" />
+    <None Include="Shaders\captureBRDFSpecularMap_vert.glsl" />
     <None Include="Shaders\captureIrradianceMap_frag.glsl" />
     <None Include="Shaders\captureIrradianceMap_vert.glsl" />
     <None Include="Shaders\capturePreFilterSpecularMap_frag.glsl" />
@@ -194,6 +197,7 @@
     <ClInclude Include="Managers\GLFWManager.h" />
     <ClInclude Include="Managers\MaterialManager.h" />
     <ClInclude Include="Managers\TextureManager.h" />
+    <ClInclude Include="Materials\BRDFMapCapture.h" />
     <ClInclude Include="Materials\CubeMap.h" />
     <ClInclude Include="Materials\CubeMapCapture.h" />
     <ClInclude Include="Materials\PBR.h" />

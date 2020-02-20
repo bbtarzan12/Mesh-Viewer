@@ -17,8 +17,3 @@ void CubeMapCapture::Draw(const glm::mat4& model, const glm::mat4& view, const g
 	SetMat4("P", projection);
 	SetMat4("V", view);
 }
-
-void CubeMapCapture::DrawUI()
-{
-
-}

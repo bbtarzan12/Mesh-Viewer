@@ -118,6 +118,9 @@
     <ClCompile Include="Materials\CubeMapCapture.cpp">
       <Filter>Materials</Filter>
     </ClCompile>
+    <ClCompile Include="Materials\BRDFMapCapture.cpp">
+      <Filter>Materials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\phong_vert.glsl">
@@ -157,6 +160,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\capturePreFilterSpecularMap_vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\captureBRDFSpecularMap_frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\captureBRDFSpecularMap_vert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -225,6 +234,9 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="Materials\CubeMapCapture.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\BRDFMapCapture.h">
       <Filter>Materials</Filter>
     </ClInclude>
   </ItemGroup>

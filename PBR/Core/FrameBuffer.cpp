@@ -24,7 +24,26 @@ FrameBuffer::~FrameBuffer()
 	glDeleteRenderbuffers(1, &rbo);
 }
 
-void FrameBuffer::CaptureIrradianceMap(const std::shared_ptr<CubeMapTexture> source, const std::shared_ptr<CubeMapTexture> destination, const std::shared_ptr<CubeMapCapture>& cubeMapCapture)
+void FrameBuffer::Capture(const std::shared_ptr<Texture>& destination, const std::shared_ptr<Material>& material)
+{
+	const int& destID = destination->GetID();
+
+	material->Use();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	Resize(destination->GetSize());
+	glDisable(GL_CULL_FACE);
+	glm::mat4 empty(0);
+	material->Draw(empty, empty, empty);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, destID, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DrawHelper::DrawQuad();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glEnable(GL_CULL_FACE);
+}
+
+void FrameBuffer::CaptureIrradianceMap(const std::shared_ptr<CubeMapTexture>& source, const std::shared_ptr<CubeMapTexture>& destination, const std::shared_ptr<CubeMapCapture>& cubeMapCapture)
 {
 	const int& sourceID = source->GetID();
 	const int& destID = destination->GetID();
@@ -49,7 +68,7 @@ void FrameBuffer::CaptureIrradianceMap(const std::shared_ptr<CubeMapTexture> sou
 	glEnable(GL_CULL_FACE);
 }
 
-void FrameBuffer::CapturePreFilterMap(const std::shared_ptr<CubeMapTexture> source, const std::shared_ptr<CubeMapTexture> destination, const std::shared_ptr<CubeMapCapture>& cubeMapCapture, const int maxMipLevel)
+void FrameBuffer::CapturePreFilterMap(const std::shared_ptr<CubeMapTexture>& source, const std::shared_ptr<CubeMapTexture>& destination, const std::shared_ptr<CubeMapCapture>& cubeMapCapture, const int maxMipLevel)
 {
 	const int& sourceID = source->GetID();
 	const int& destID = destination->GetID();
@@ -88,6 +107,7 @@ void FrameBuffer::Resize(const glm::ivec2& size)
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size.x, size.y);
 	glViewport(0, 0, size.x, size.y);
+	this->size = size;
 }
 
 glm::mat4 FrameBuffer::captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);

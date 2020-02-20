@@ -18,7 +18,7 @@ public:
 
 	virtual void Use() const;
 	virtual void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const;
-	virtual void DrawUI() = 0;
+	virtual void DrawUI();
 
 	void SetShader(const std::string& vertShader, const std::string& fragShader);
 	void SetInt(const std::string& name, const int value) const;

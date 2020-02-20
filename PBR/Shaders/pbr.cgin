@@ -66,6 +66,24 @@ float GeometrySmithsMethod(vec3 normal, vec3 viewDir, vec3 lightDir, float k)
 	return viewSub * lightSub;
 }
 
+float GeometrySchlickGGXIBLSpecular(vec3 normal, vec3 v, float k)
+{
+	k = (k * k) / 2.0;
+	float NdotV = saturate(dot(normal, v));
+
+	float num = NdotV;
+	float denom = NdotV * (1 - k) + k;
+
+	return num / denom;
+}
+
+float GeometrySmithsMethodIBLSpecular(vec3 normal, vec3 viewDir, vec3 lightDir, float k)
+{
+	float viewSub = GeometrySchlickGGXIBLSpecular(normal, viewDir, k);
+	float lightSub = GeometrySchlickGGXIBLSpecular(normal, lightDir, k);
+	return viewSub * lightSub;
+}
+
 vec3 FresnelSchlickApproximation(vec3 F0, vec3 viewDir, vec3 halfDir)
 {
 	float HdotV = dot(halfDir, viewDir);

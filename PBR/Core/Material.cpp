@@ -25,6 +25,11 @@ void Material::Draw(const glm::mat4& model, const glm::mat4& view, const glm::ma
 
 }
 
+void Material::DrawUI()
+{
+
+}
+
 void Material::SetShader(const std::string& vertShader, const std::string& fragShader)
 {
 	shader = ShaderLoader::Load(vertShader, fragShader);
