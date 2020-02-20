@@ -133,6 +133,17 @@ void Material::SetBool(const std::string& name, const bool value) const
 		glUseProgram(0);
 }
 
+void Material::SetDefaultColor(const std::string& name, const glm::vec4& value)
+{
+	const auto& iter = std::find(textureNames.begin(), textureNames.end(), name);
+	if (iter == textureNames.end())
+		return;
+
+	int index = std::distance(textureNames.begin(), iter);
+
+	defaultColors[index] = value;
+}
+
 void Material::SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture)
 {
 	if (texture == nullptr)

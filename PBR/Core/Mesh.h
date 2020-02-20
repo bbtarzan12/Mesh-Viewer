@@ -17,6 +17,7 @@ public:
 
 	void Draw(const glm::mat4& view, const glm::mat4& projection) const;
 	void DrawUI();
+	void Move(const glm::vec3& delta);
 
 	void SetMaterial(const std::shared_ptr<Material> newMaterial);
 	const std::string& GetName() const;

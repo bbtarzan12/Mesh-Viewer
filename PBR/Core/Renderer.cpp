@@ -107,17 +107,17 @@ void Renderer::Init()
 	pbrMaterial->SetTexture("irradianceMapTexture", TextureManager::Instance().GetTexture<Texture>("IrradianceMap"));
 	pbrMaterial->SetTexture("preFilterSpecularMapTexture", TextureManager::Instance().GetTexture<Texture>("PreFilterMap"));
 	pbrMaterial->SetTexture("brdfSpecularMapTexture", TextureManager::Instance().GetTexture<Texture>("BRDFMap"));
-	pbrMaterial->SetTexture("albedoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Albedo"));
-	pbrMaterial->SetTexture("normalTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Normal"));
-	pbrMaterial->SetTexture("metallicTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Metallic"));
-	pbrMaterial->SetTexture("roughnessTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Roughness"));
-	pbrMaterial->SetTexture("aoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_AO"));
+	//pbrMaterial->SetTexture("albedoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Albedo"));
+	//pbrMaterial->SetTexture("normalTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Normal"));
+	//pbrMaterial->SetTexture("metallicTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Metallic"));
+	//pbrMaterial->SetTexture("roughnessTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Roughness"));
+	//pbrMaterial->SetTexture("aoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_AO"));
 
 	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(0, -1, 0), glm::vec3(1, 1, 1), 1.0f);
-	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(13, 0, 0), glm::vec3(1, 1, 1), 10.0f);
-	std::shared_ptr<PointLight> light2 = std::make_shared<PointLight>(glm::vec3(13, 0, 6), glm::vec3(1, 1, 1), 10.0f);
-	std::shared_ptr<PointLight> light3 = std::make_shared<PointLight>(glm::vec3(13, 7, 0), glm::vec3(1, 1, 1), 10.0f);
-	std::shared_ptr<PointLight> light4 = std::make_shared<PointLight>(glm::vec3(13, 10, 6), glm::vec3(1, 1, 1), 10.0f);
+	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(100, 0, 100), glm::vec3(1, 1, 1), 1000.0f);
+	std::shared_ptr<PointLight> light2 = std::make_shared<PointLight>(glm::vec3(0, 100, 100), glm::vec3(1, 1, 1), 1000.0f);
+	std::shared_ptr<PointLight> light3 = std::make_shared<PointLight>(glm::vec3(100, 100, 100), glm::vec3(1, 1, 1), 1000.0f);
+	std::shared_ptr<PointLight> light4 = std::make_shared<PointLight>(glm::vec3(0, 0, 100), glm::vec3(1, 1, 1), 1000.0f);
 	lights.push_back(directionalLight);
 	lights.push_back(light);
 	lights.push_back(light2);
@@ -335,12 +335,14 @@ void Renderer::Update(double deltaTime)
 	camera->UpdateCamera(deltaTime, input);
 }
 
-void Renderer::LoadMesh(const std::string& filePath, const std::string& materialName)
+const std::shared_ptr<Mesh>& Renderer::LoadMesh(const std::string& filePath, const std::string& materialName)
 {
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(filePath);
 	mesh->SetMaterial(MaterialManager::Instance().GetMaterial(materialName));
 
 	meshes.push_back(mesh);
+
+	return meshes[meshes.size() - 1];
 }
 
 void Renderer::LoadCubeMap(const std::vector<std::string>& faces)

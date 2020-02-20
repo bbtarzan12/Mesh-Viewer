@@ -35,7 +35,7 @@ public:
 private:
 	void Render(double deltaTime);
 	void Update(double deltaTime);
-	void LoadMesh(const std::string& filePath, const std::string& materialName);
+	const std::shared_ptr<Mesh>& LoadMesh(const std::string& filePath, const std::string& materialName);
 	void LoadCubeMap(const std::vector<std::string>& faces);
 
 	void CreateMaterial();

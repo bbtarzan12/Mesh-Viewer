@@ -28,6 +28,8 @@ public:
 	void SetFloat(const std::string& name, const float value) const;
 	void SetMat4(const std::string& name, const glm::mat4& value) const;
 	void SetBool(const std::string& name, const bool value) const;
+
+	void SetDefaultColor(const std::string& name, const glm::vec4& value);
 	void SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
 
 	glm::ivec2 GetTextureSize(const std::string& name) const;

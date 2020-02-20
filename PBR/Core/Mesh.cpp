@@ -96,6 +96,11 @@ void Mesh::DrawUI()
 	}
 }
 
+void Mesh::Move(const glm::vec3& delta)
+{
+	position += delta;
+}
+
 void Mesh::SetMaterial(const std::shared_ptr<Material> newMaterial)
 {
 	material = newMaterial;
