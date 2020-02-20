@@ -200,7 +200,7 @@ bool Material::DrawTexturePannel(const std::string& name, const glm::vec2& size)
 	{
 		ImGui::BeginChild(name.c_str(), { 150, 170 }, true);
 		ImGui::Text(name.c_str());
-		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(id)), { 128, 128 });
+		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(id)), { 128, 128 }, ImVec2(0, 1), ImVec2(1, 0));
 
 		ImVec2 pos = ImGui::GetCursorPos();
 		pos.x += ImGui::GetWindowWidth() - 60;
