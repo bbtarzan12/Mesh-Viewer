@@ -45,6 +45,26 @@ vec4 Sample(TextureCube t, vec3 UV)
 	return t.defaultColor;
 }
 
+vec4 SampleLod(Texture2D t, vec2 UV, float lod)
+{
+	if(t.use)
+	{
+		return textureLod(t.texture, UV, lod);
+	}
+
+	return t.defaultColor;
+}
+
+vec4 SampleLod(TextureCube t, vec3 UV, float lod)
+{
+	if(t.use)
+	{
+		return textureLod(t.texture, UV, lod);
+	}
+
+	return t.defaultColor;
+}
+
 float saturate(float value)
 {
 	return clamp(value, 0, 1);

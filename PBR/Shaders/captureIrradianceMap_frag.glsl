@@ -14,8 +14,8 @@ void main()
 	vec3 irradiance = vec3(0);
 
 	vec3 up = vec3(0, 1, 0);
-	vec3 right = cross(up, normal);
-	up = cross(normal, right);
+	vec3 tangent = normalize(cross(up, normal));
+	vec3 biTangent = cross(normal, tangent);
 
 	float deltaPhi = 0.025;
 	float deltaTheta = 0.025;
@@ -28,9 +28,9 @@ void main()
 			float cosTheta = cos(theta);
 			float cosPhi = cos(phi);
 			float sinPhi = sin(phi);
-			
+
 			vec3 cartesian = vec3(sinTheta * cosPhi, sinTheta * sinPhi, cosTheta);
-			vec3 worldDirection = cartesian.x * right + cartesian.y * up + cartesian.z * normal;
+			vec3 worldDirection = cartesian.x * tangent + cartesian.y * biTangent + cartesian.z * normal;
 
 			irradiance += Sample(cubeMapTexture, worldDirection).rgb * cos(theta) * sin(theta);
 			numSamples += 1;

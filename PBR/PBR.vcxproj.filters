@@ -147,10 +147,16 @@
     <None Include="Shaders\pbr_vert.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\cubeMapCapture_frag.glsl">
+    <None Include="Shaders\captureIrradianceMap_frag.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\cubeMapCapture_vert.glsl">
+    <None Include="Shaders\captureIrradianceMap_vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\capturePreFilterSpecularMap_frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\capturePreFilterSpecularMap_vert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -8,12 +8,14 @@
 Material::Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames)
 	:textureNames(textureNames), fileDialog(std::make_shared<ImGui::FileBrowser>())
 {
-	shader = ShaderLoader::Load(vertShader, fragShader);
+	SetShader(vertShader, fragShader);
 	InitializeTextures();
 }
 
 void Material::Use() const
 {
+	assert(shader != 0);
+
 	glUseProgram(shader);
 	AttachTextures();
 }
@@ -21,6 +23,11 @@ void Material::Use() const
 void Material::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const
 {
 
+}
+
+void Material::SetShader(const std::string& vertShader, const std::string& fragShader)
+{
+	shader = ShaderLoader::Load(vertShader, fragShader);
 }
 
 void Material::SetInt(const std::string& name, const int value) const

@@ -7,6 +7,7 @@ PBR::PBR()	:
 	Material("Shaders/pbr_vert.glsl", "Shaders/pbr_frag.glsl", 
 		{
 			"irradianceMapTexture",
+			"preFilterSpecularMapTexture",
 			"albedoTexture",
 			"normalTexture",
 			"metallicTexture",
@@ -41,7 +42,7 @@ void PBR::DrawUI()
 
 	if (!DrawTexturePannel("albedoTexture", { 300, 300 }))
 	{
-		ImGui::ColorPicker4("##AlbedoColor", &defaultColors[1].r);
+		ImGui::ColorPicker4("##AlbedoColor", &defaultColors[2].r);
 
 		ImGui::EndChild();
 	}
@@ -56,7 +57,7 @@ void PBR::DrawUI()
 	{
 		ImGui::Text("Metallic");
 		ImGui::SameLine();
-		ImGui::SliderFloat("##Metallic", &defaultColors[3].r, 0, 1);
+		ImGui::SliderFloat("##Metallic", &defaultColors[4].r, 0, 1);
 		ImGui::EndChild();
 	}
 
@@ -64,7 +65,7 @@ void PBR::DrawUI()
 	{
 		ImGui::Text("Roughness");
 		ImGui::SameLine();
-		ImGui::SliderFloat("##Roughness", &defaultColors[4].r, 0, 1);
+		ImGui::SliderFloat("##Roughness", &defaultColors[5].r, 0, 1);
 		ImGui::EndChild();
 	}
 
@@ -72,7 +73,7 @@ void PBR::DrawUI()
 	{
 		ImGui::Text("AO");
 		ImGui::SameLine();
-		ImGui::SliderFloat("##AO", &defaultColors[5].r, 0, 1);
+		ImGui::SliderFloat("##AO", &defaultColors[6].r, 0, 1);
 		ImGui::EndChild();
 	}
 }

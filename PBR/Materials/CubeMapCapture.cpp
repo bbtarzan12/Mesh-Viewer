@@ -3,8 +3,8 @@
 CubeMapCapture::CubeMapCapture()
 	:Material
 	(
-		"Shaders/cubeMapCapture_vert.glsl",
-		"Shaders/cubeMapCapture_frag.glsl",
+		"Shaders/captureIrradianceMap_vert.glsl",
+		"Shaders/captureIrradianceMap_frag.glsl",
 		{"cubeMapTexture"}
 	)
 {

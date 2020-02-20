@@ -8,7 +8,7 @@ class Texture
 {
 public:
 	Texture(const std::string& filePath, const bool sRGB = false);
-	Texture(const GLenum& internalformat, const GLenum& dataType, const glm::ivec2& size, const bool sRGB = false);
+	Texture(const GLenum& internalformat, const GLenum& dataType, const glm::ivec2& size, const bool mipMap = false);
 	virtual ~Texture();
 
 	const GLuint& GetID() const;

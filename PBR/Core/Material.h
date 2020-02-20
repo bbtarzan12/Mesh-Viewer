@@ -20,6 +20,7 @@ public:
 	virtual void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const;
 	virtual void DrawUI() = 0;
 
+	void SetShader(const std::string& vertShader, const std::string& fragShader);
 	void SetInt(const std::string& name, const int value) const;
 	void SetVec2(const std::string& name, const glm::vec2& value) const;
 	void SetVec3(const std::string& name, const glm::vec3& value) const;
@@ -46,7 +47,7 @@ private:
 	bool CheckCurrentShader() const;
 
 protected:
-	GLuint shader;
+	GLuint shader = 0;
 
 	std::map<std::string, std::shared_ptr<Texture>> textures;
 	std::vector<std::string> textureNames;

@@ -14,6 +14,7 @@ in mat3 TBN;
 out vec3 color;
 
 uniform TextureCube irradianceMapTexture;
+uniform TextureCube preFilterSpecularMapTexture;
 uniform Texture2D albedoTexture;
 uniform Texture2D normalTexture;
 uniform Texture2D metallicTexture;
@@ -45,6 +46,7 @@ void main()
 	vec3 Lo = vec3(0);
 
 	vec3 viewDir = normalize(cameraPosition_tangentSpace - fragPosition_tangentSpace);
+	vec3 reflectDir = normalize(reflect(-viewDir, normal));
 	for (int i = 0; i < NUM_LIGHTS; i++)
 	{
 		vec3 lightDir = lights[i].isDirectional ?
@@ -74,12 +76,19 @@ void main()
 		Lo += (kD * albedo / PI + specular) * radiance * saturate(dot(normal, lightDir));
 	}
 
-	vec3 kS = FresnelSchlickApproximationWithRoughness(F0, viewDir, normal, roughness);
+	vec3 F = FresnelSchlickApproximationWithRoughness(F0, viewDir, normal, roughness);
+
+	vec3 kS = F;
 	vec3 kD = vec3(1.0) - kS;
 	kD *= 1.0 - metallic;
+
 	vec3 irradiance = Sample(irradianceMapTexture, normal * TBN).rgb;
 	vec3 diffuse = irradiance * albedo;
-	vec3 ambient = (kD * diffuse) * ao;
+
+	const float MAX_REFLECTION_LOD = 5.0 - 1.0;
+	vec3 prefilteredColor = SampleLod(preFilterSpecularMapTexture, reflectDir * TBN, roughness * MAX_REFLECTION_LOD).rgb;
+
+	vec3 ambient = (kD * diffuse + prefilteredColor) * ao;
 
 	color = GammaCorrection(ambient + Lo);
 }

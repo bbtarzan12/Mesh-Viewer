@@ -166,9 +166,11 @@
     <ClCompile Include="Util\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\captureIrradianceMap_frag.glsl" />
+    <None Include="Shaders\captureIrradianceMap_vert.glsl" />
+    <None Include="Shaders\capturePreFilterSpecularMap_frag.glsl" />
+    <None Include="Shaders\capturePreFilterSpecularMap_vert.glsl" />
     <None Include="Shaders\common.cgin" />
-    <None Include="Shaders\cubeMapCapture_frag.glsl" />
-    <None Include="Shaders\cubeMapCapture_vert.glsl" />
     <None Include="Shaders\cubeMap_frag.glsl" />
     <None Include="Shaders\cubeMap_vert.glsl" />
     <None Include="Shaders\pbr.cgin" />
