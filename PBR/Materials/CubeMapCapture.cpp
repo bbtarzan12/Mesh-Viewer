@@ -5,7 +5,8 @@ CubeMapCapture::CubeMapCapture()
 	(
 		"Shaders/captureIrradianceMap_vert.glsl",
 		"Shaders/captureIrradianceMap_frag.glsl",
-		{"cubeMapTexture"}
+		{"cubeMapTexture"},
+		false
 	)
 {
 

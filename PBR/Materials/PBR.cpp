@@ -60,10 +60,9 @@ void PBR::DrawUI()
 	ImGui::SameLine();
 	ImGui::Combo("##F", reinterpret_cast<int*>(&f), fStrings);
 
-	if (!DrawTexturePannel("albedoTexture", { 300, 300 }))
+	if (!DrawTexturePannel("albedoTexture", { 300, 60 }))
 	{
-		ImGui::ColorPicker4("##AlbedoColor", &defaultColors[3].r);
-
+		ImGui::ColorEdit4("##AlbedoColor", &defaultColors[3].r);
 		ImGui::EndChild();
 	}
 

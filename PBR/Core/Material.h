@@ -13,7 +13,7 @@ namespace ImGui { class FileBrowser; }
 class Material
 {
 public:
-	Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames);
+	Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames, bool bVisible = true);
 	virtual ~Material() = default;
 
 	virtual void Use() const;
@@ -31,6 +31,8 @@ public:
 
 	void SetDefaultColor(const std::string& name, const glm::vec4& value);
 	void SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
+
+	bool Visible() const;
 
 	glm::ivec2 GetTextureSize(const std::string& name) const;
 	GLuint GetTextureID(const std::string& name) const;
@@ -59,4 +61,5 @@ private:
 
 	//UI
 	std::shared_ptr<ImGui::FileBrowser> fileDialog;
+	bool bVisible;
 };

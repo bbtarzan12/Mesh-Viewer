@@ -48,10 +48,9 @@ void Phong::DrawUI()
 	ImGui::SameLine();
 	ImGui::DragInt("##Shininess", &shininess, 1.0f, 1, 100);
 
-	if (!DrawTexturePannel("diffuseTexture", {300, 300}))
+	if (!DrawTexturePannel("diffuseTexture", {300, 60}))
 	{
-		ImGui::ColorPicker4("##Color", glm::value_ptr(defaultColors[1]));
-
+		ImGui::ColorEdit4("##Color", glm::value_ptr(defaultColors[1]));
 		ImGui::EndChild();
 	}
 
@@ -61,17 +60,11 @@ void Phong::DrawUI()
 		ImGui::EndChild();
 	}
 	
-	if (!DrawTexturePannel("specularTexture", {300, 100}))
+	if (!DrawTexturePannel("specularTexture", {300, 60}))
 	{
-		float power = defaultColors[3].r;
 		ImGui::Text("Power");
 		ImGui::SameLine();
-		if (ImGui::SliderFloat("##Power", &power, 0, 1))
-		{
-			defaultColors[3].r = power;
-			defaultColors[3].g = power;
-			defaultColors[3].b = power;
-		}
+		ImGui::SliderFloat("##Power", &defaultColors[3].r, 0, 1);
 		ImGui::EndChild();
 	}
 }

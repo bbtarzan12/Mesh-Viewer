@@ -303,6 +303,8 @@ void Renderer::RenderMeshLoadWindow(double deltaTime)
 			names.reserve(numMaterials);
 			for (auto& material : MaterialManager::Instance().GetMaterials())
 			{
+				if (!material.second->Visible())
+					continue;
 				names.push_back(material.first);
 			}
 

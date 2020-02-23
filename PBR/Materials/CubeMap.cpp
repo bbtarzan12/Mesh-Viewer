@@ -6,7 +6,8 @@ CubeMap::CubeMap()
 	(
 		"Shaders/cubeMap_vert.glsl",
 		"Shaders/cubeMap_frag.glsl",
-		{"cubeMapTexture"}
+		{"cubeMapTexture"},
+		false
 	)
 {
 
@@ -21,4 +22,9 @@ void CubeMap::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat
 
 	SetMat4("V", newView);
 	SetMat4("P", projection);
+}
+
+void CubeMap::DrawUI()
+{
+
 }

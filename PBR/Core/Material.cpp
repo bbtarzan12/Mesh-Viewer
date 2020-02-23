@@ -5,8 +5,8 @@
 #include <imfilebrowser.h>
 #include "../Managers/TextureManager.h"
 
-Material::Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames)
-	:textureNames(textureNames), fileDialog(std::make_shared<ImGui::FileBrowser>())
+Material::Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames, bool bVisible)
+	:textureNames(textureNames), fileDialog(std::make_shared<ImGui::FileBrowser>()), bVisible(bVisible)
 {
 	SetShader(vertShader, fragShader);
 	InitializeTextures();
@@ -150,6 +150,11 @@ void Material::SetTexture(const std::string& name, const std::shared_ptr<Texture
 		return;
 
 	textures[name] = texture;
+}
+
+bool Material::Visible() const
+{
+	return bVisible;
 }
 
 glm::ivec2 Material::GetTextureSize(const std::string& name) const

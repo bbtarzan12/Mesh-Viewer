@@ -5,7 +5,7 @@
 
 
 Camera::Camera(const glm::uvec2& size, float fov, const glm::vec2& clippingPlanes) :
-	position(10, 0, 10),
+	position(0, 0, -20),
 	up(0, 1, 0),
 	forward(0, 0, -1),
 	right(1, 0, 0),
