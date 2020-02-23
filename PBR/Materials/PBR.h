@@ -1,8 +1,28 @@
 #pragma once
 #include "../Core/Material.h"
+#include <vector>
+#include <string>
 
 class PBR : public Material
 {
+	enum class NDF
+	{
+		BlinnPhong,
+		Beckmann,
+		TrowbridgeReitz
+	};
+
+	enum class F
+	{
+		SchlickApproximation
+	};
+
+	enum class G
+	{
+		SchlickGGX,
+		GGX
+	};
+
 public:
 	PBR();
 
@@ -12,5 +32,12 @@ public:
 private:
 	glm::vec2 uvScale;
 	glm::vec2 uvOffset;
+	NDF ndf;
+	F f;
+	G g;
+
+	static const std::vector<std::string> ndfStrings;
+	static const std::vector<std::string> fStrings;
+	static const std::vector<std::string> gStrings;
 
 };

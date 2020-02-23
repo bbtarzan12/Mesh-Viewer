@@ -1,0 +1,36 @@
+float GeometrySchlickGGX(vec3 normal, vec3 v, float k)
+{
+	k += 1;
+	k = (k * k) / 8.0; // Direct Lighting Remapped
+	float NdotV = saturate(dot(normal, v));
+
+	float num = NdotV;
+	float denom = NdotV * (1 - k) + k;
+
+	return num / denom;
+}
+
+float GeometryGGX(vec3 normal, vec3 v, float k)
+{
+	float alpha2 = k * k;
+	float NdotV = saturate(dot(normal, v));
+
+	float num = 2 * NdotV;
+	float denom = NdotV + sqrt(alpha2 + (1 - alpha2) * NdotV * NdotV) + Epsilon;
+
+	return num / denom;
+}
+
+float GeometryGGXSmithsMethod(vec3 normal, vec3 viewDir, vec3 lightDir, float k)
+{
+	float viewSub = GeometryGGX(normal, viewDir, k);
+	float lightSub = GeometryGGX(normal, lightDir, k);
+	return viewSub * lightSub;
+}
+
+float GeometrySchlickGGXSmithsMethod(vec3 normal, vec3 viewDir, vec3 lightDir, float k)
+{
+	float viewSub = GeometrySchlickGGX(normal, viewDir, k);
+	float lightSub = GeometrySchlickGGX(normal, lightDir, k);
+	return viewSub * lightSub;
+}

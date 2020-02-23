@@ -1,9 +1,13 @@
 #include "PBR.h"
 #include <imgui.h>
+#include <imgui_custom.h>
 
 PBR::PBR()	:	
 	uvScale(1, 1),
 	uvOffset(0, 0),
+	ndf(NDF::TrowbridgeReitz),
+	g(G::SchlickGGX),
+	f(F::SchlickApproximation),
 	Material("Shaders/pbr_vert.glsl", "Shaders/pbr_frag.glsl", 
 		{
 			"irradianceMapTexture",
@@ -24,6 +28,9 @@ void PBR::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& p
 	Material::Draw(model, view, projection);
 	glDepthFunc(GL_LESS);
 
+	SetInt("ndfIndex", static_cast<int>(ndf));
+	SetInt("gIndex", static_cast<int>(g));
+	SetInt("fIndex", static_cast<int>(f));
 	SetVec2("uvOffset", uvOffset);
 	SetVec2("uvScale", uvScale);
 	SetMat4("M", model);
@@ -41,6 +48,18 @@ void PBR::DrawUI()
 	ImGui::SameLine();
 	ImGui::DragFloat2("##UV Scale", &uvScale[0], 0.1f);
 
+	ImGui::Text("NDF");
+	ImGui::SameLine();
+	ImGui::Combo("##NDF", reinterpret_cast<int*>(&ndf), ndfStrings);
+
+	ImGui::Text("G");
+	ImGui::SameLine();
+	ImGui::Combo("##G", reinterpret_cast<int*>(&g), gStrings);
+
+	ImGui::Text("F");
+	ImGui::SameLine();
+	ImGui::Combo("##F", reinterpret_cast<int*>(&f), fStrings);
+
 	if (!DrawTexturePannel("albedoTexture", { 300, 300 }))
 	{
 		ImGui::ColorPicker4("##AlbedoColor", &defaultColors[3].r);
@@ -54,7 +73,7 @@ void PBR::DrawUI()
 		ImGui::EndChild();
 	}
 
-	if (!DrawTexturePannel("metallicTexture", { 300, 100 }))
+	if (!DrawTexturePannel("metallicTexture", { 300, 60 }))
 	{
 		ImGui::Text("Metallic");
 		ImGui::SameLine();
@@ -62,7 +81,7 @@ void PBR::DrawUI()
 		ImGui::EndChild();
 	}
 
-	if (!DrawTexturePannel("roughnessTexture", { 300, 100 }))
+	if (!DrawTexturePannel("roughnessTexture", { 300, 60 }))
 	{
 		ImGui::Text("Roughness");
 		ImGui::SameLine();
@@ -70,7 +89,7 @@ void PBR::DrawUI()
 		ImGui::EndChild();
 	}
 
-	if (!DrawTexturePannel("aoTexture", { 300, 100 }))
+	if (!DrawTexturePannel("aoTexture", { 300, 60 }))
 	{
 		ImGui::Text("AO");
 		ImGui::SameLine();
@@ -78,3 +97,7 @@ void PBR::DrawUI()
 		ImGui::EndChild();
 	}
 }
+
+const std::vector<std::string> PBR::ndfStrings{ "BlinnPhong", "Beckmann", "TrowbridgeReitz" };
+const std::vector<std::string> PBR::fStrings{ "SchlickApproximation" };
+const std::vector<std::string> PBR::gStrings{ "SchlickGGX", "GGX" };

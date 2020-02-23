@@ -168,6 +168,15 @@
     <None Include="Shaders\captureBRDFSpecularMap_vert.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\pbr_NDF.cgin">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\pbr_G.cgin">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\pbr_F.cgin">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Camera.h">

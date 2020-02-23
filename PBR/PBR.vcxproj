@@ -177,7 +177,10 @@
     <None Include="Shaders\cubeMap_frag.glsl" />
     <None Include="Shaders\cubeMap_vert.glsl" />
     <None Include="Shaders\pbr.cgin" />
+    <None Include="Shaders\pbr_F.cgin" />
     <None Include="Shaders\pbr_frag.glsl" />
+    <None Include="Shaders\pbr_G.cgin" />
+    <None Include="Shaders\pbr_NDF.cgin" />
     <None Include="Shaders\pbr_vert.glsl" />
     <None Include="Shaders\phong_frag.glsl" />
     <None Include="Shaders\phong_lights.cgin" />

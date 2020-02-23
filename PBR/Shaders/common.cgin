@@ -1,4 +1,5 @@
 const float PI = 3.1415926535897932384626433832795;
+const float Epsilon = 0.00000001;
 
 const int NUM_LIGHTS = 8;
 const float GAMMA = 2.2;

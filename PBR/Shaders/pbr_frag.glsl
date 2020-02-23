@@ -25,6 +25,9 @@ uniform Texture2D aoTexture;
 uniform vec3 cameraPosition_worldSpace;
 uniform vec2 uvOffset;
 uniform vec2 uvScale;
+uniform int ndfIndex;
+uniform int gIndex;
+uniform int fIndex;
 
 uniform Light lights[NUM_LIGHTS];
 
@@ -60,16 +63,16 @@ void main()
 		float attenuation = lights[i].isDirectional ? 1.0 : 1.0 / (distance * distance);
 		vec3 radiance = lights[i].color * lights[i].power * attenuation;
 
-		float NDF = DistributionTrowbridgeReitzGGX(normal, halfDir, roughness);
-		float G = GeometrySmithsMethod(normal, viewDir, lightDir, roughness);
-		vec3 F = FresnelSchlickApproximation(F0, viewDir, halfDir);
+		float NDF = NormalDistributionFunction(ndfIndex, normal, halfDir, roughness);
+		float G = GeometryFunction(gIndex, normal, viewDir, lightDir, roughness);
+		vec3 F = FresnelFunction(fIndex, F0, viewDir, halfDir);
 
 		float NdotL = saturate(dot(normal, lightDir));
 		float NdotV = saturate(dot(normal, viewDir));
 
 		vec3 num = NDF * G * F;
-		float denom = 4.0 * NdotL * NdotV;
-		vec3 specular = num / max(denom, 0.0001);
+		float denom = 4.0 * NdotL * NdotV + Epsilon;
+		vec3 specular = num / denom;
 
 		vec3 kS = F;
 		vec3 kD = vec3(1.0) - kS;

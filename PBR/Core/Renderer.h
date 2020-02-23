@@ -59,8 +59,8 @@ private:
 
 	// UI
 	std::shared_ptr<ImGui::FileBrowser> fileDialog;
-	int selectedMeshIndex = -1;
-	int selectedMaterialIndex = -1;
+	int selectedMeshIndex = 0;
+	int selectedMaterialIndex = 0;
 
 	std::string selectedMeshFilePath = "";
 

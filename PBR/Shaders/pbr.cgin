@@ -1,3 +1,7 @@
+#include pbr_NDF.cgin
+#include pbr_G.cgin
+#include pbr_F.cgin
+
 float RadicalInverseOfVanDerCorputSequence(uint bits) 
 {
     bits = (bits << 16u) | (bits >> 16u);
@@ -11,18 +15,6 @@ float RadicalInverseOfVanDerCorputSequence(uint bits)
 vec2 Hammersley(uint i, uint N)
 {
 	return vec2(float(i)/float(N), RadicalInverseOfVanDerCorputSequence(i));
-}
-
-float DistributionTrowbridgeReitzGGX(vec3 normal, vec3 halfDir, float roughness)
-{
-	float alpha = roughness * roughness;
-	float alpha2 = alpha * alpha;
-	float NdotH = saturate(dot(normal, halfDir));
-
-	float num = alpha2;
-	float denom = PI * pow(NdotH * NdotH * (alpha2 - 1) + 1, 2);
-
-	return num / denom;
 }
 
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 normal, float roughness)
@@ -47,25 +39,6 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 normal, float roughness)
 	return normalize(worldDirection);
 }
 
-float GeometrySchlickGGX(vec3 normal, vec3 v, float k)
-{
-	k += 1;
-	k = (k * k) / 8.0; // Direct Lighting Remapped
-	float NdotV = saturate(dot(normal, v));
-
-	float num = NdotV;
-	float denom = NdotV * (1 - k) + k;
-
-	return num / denom;
-}
-
-float GeometrySmithsMethod(vec3 normal, vec3 viewDir, vec3 lightDir, float k)
-{
-	float viewSub = GeometrySchlickGGX(normal, viewDir, k);
-	float lightSub = GeometrySchlickGGX(normal, lightDir, k);
-	return viewSub * lightSub;
-}
-
 float GeometrySchlickGGXIBLSpecular(vec3 normal, vec3 v, float k)
 {
 	k = (k * k) / 2.0;
@@ -84,14 +57,35 @@ float GeometrySmithsMethodIBLSpecular(vec3 normal, vec3 viewDir, vec3 lightDir, 
 	return viewSub * lightSub;
 }
 
-vec3 FresnelSchlickApproximation(vec3 F0, vec3 viewDir, vec3 halfDir)
-{
-	float HdotV = saturate(dot(halfDir, viewDir));
-	return F0 + (1.0 - F0) * pow(1.0 - HdotV, 5);
-}
-
 vec3 FresnelSchlickApproximationWithRoughness(vec3 F0, vec3 viewDir, vec3 normal, float roughness)
 {
 	float NdotV = saturate(dot(viewDir, normal));
 	return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - NdotV, 5);
+}
+
+float NormalDistributionFunction(int index, vec3 normal, vec3 halfDir, float roughness)
+{
+	switch (index)
+	{
+		case 0: return NormalDistributionBlinnPhong(normal, halfDir, roughness);
+		case 1: return NormalDistributionBeckmann(normal, halfDir, roughness);
+		case 2: return NormalDistributionTrowbridgeReitzGGX(normal, halfDir, roughness);
+	}
+}
+
+float GeometryFunction(int index, vec3 normal, vec3 viewDir, vec3 lightDir, float k)
+{
+	switch (index)
+	{
+		case 0: return GeometrySchlickGGXSmithsMethod(normal, viewDir, lightDir, k);
+		case 1: return GeometryGGXSmithsMethod(normal, viewDir, lightDir, k);
+	}
+}
+
+vec3 FresnelFunction(int index, vec3 F0, vec3 viewDir, vec3 halfDir)
+{
+	switch (index)
+	{
+		case 0: return FresnelSchlickApproximation(F0, viewDir, halfDir);
+	}
 }

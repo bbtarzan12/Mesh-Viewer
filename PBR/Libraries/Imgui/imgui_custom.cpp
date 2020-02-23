@@ -9,16 +9,18 @@ static auto vector_getter = [](void* vec, int idx, const char** out_text)
 	return true;
 };
 
-bool ImGui::Combo(const char* label, int* currIndex, std::vector<std::string>& values)
+bool ImGui::Combo(const char* label, int* currIndex, const std::vector<std::string>& values)
 {
 	if (values.empty()) { return false; }
+	std::vector<std::string> localCopies(values);
 	return Combo(label, currIndex, vector_getter,
-		static_cast<void*>(&values), values.size());
+		static_cast<void*>(&localCopies), values.size());
 }
 
-bool ImGui::ListBox(const char* label, int* currIndex, std::vector<std::string>& values)
+bool ImGui::ListBox(const char* label, int* currIndex, const std::vector<std::string>& values)
 {
 	if (values.empty()) { return false; }
+	std::vector<std::string> localCopies(values);
 	return ListBox(label, currIndex, vector_getter,
-		static_cast<void*>(&values), values.size());
+		static_cast<void*>(&localCopies), values.size());
 }

@@ -1,0 +1,41 @@
+float NormalDistributionBlinnPhong(vec3 normal, vec3 halfDir, float roughness)
+{
+	float alpha = roughness * roughness;
+	float alpha2 = alpha * alpha;
+	float NdotH = saturate(dot(normal, halfDir));
+
+	float exponent = (2 / alpha2) - 2;
+	float num = saturate(pow(NdotH, exponent));
+	float denom = PI * alpha2 + Epsilon;
+
+	return num / denom;
+}
+
+float NormalDistributionBeckmann(vec3 normal, vec3 halfDir, float roughness)
+{
+	float alpha = roughness * roughness;
+	float alpha2 = alpha * alpha;
+	float NdotH = saturate(dot(normal, halfDir));
+	float NdotH2 = NdotH * NdotH;
+	float NdotH4 = NdotH2 * NdotH2;
+
+	float exp_num = NdotH2 - 1;
+	float exp_denom = alpha2 * NdotH2 + Epsilon;
+
+	float num = exp(exp_num / exp_denom);
+	float denom = PI * alpha2 * NdotH4 + Epsilon;
+
+	return num / denom;
+}
+
+float NormalDistributionTrowbridgeReitzGGX(vec3 normal, vec3 halfDir, float roughness)
+{
+	float alpha = roughness * roughness;
+	float alpha2 = alpha * alpha;
+	float NdotH = saturate(dot(normal, halfDir));
+
+	float num = alpha2;
+	float denom = PI * pow(NdotH * NdotH * (alpha2 - 1) + 1, 2);
+
+	return num / denom;
+}
