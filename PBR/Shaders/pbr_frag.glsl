@@ -28,6 +28,7 @@ uniform vec2 uvScale;
 uniform int ndfIndex;
 uniform int gIndex;
 uniform int fIndex;
+uniform int dIndex;
 
 uniform Light lights[NUM_LIGHTS];
 
@@ -73,12 +74,13 @@ void main()
 		vec3 num = NDF * G * F;
 		float denom = 4.0 * NdotL * NdotV + Epsilon;
 		vec3 specular = num / denom;
+		vec3 diffuse = DiffuseFunction(dIndex, albedo, normal, viewDir, lightDir, roughness);
 
 		vec3 kS = F;
 		vec3 kD = vec3(1.0) - kS;
 		kD *= 1.0 - metallic;
 
-		Lo += (kD * albedo / PI + specular) * radiance * saturate(dot(normal, lightDir));
+		Lo += (kD * diffuse + specular) * radiance * NdotL;
 	}
 
 	vec3 F = FresnelSchlickApproximationWithRoughness(F0, viewDir, normal, roughness);
@@ -97,5 +99,5 @@ void main()
 
 	vec3 ambient = (kD * diffuse + specular) * ao;
 
-	color = GammaCorrection(ambient + Lo);
+	color = GammaCorrection(Lo + ambient);
 }

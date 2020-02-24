@@ -23,6 +23,12 @@ class PBR : public Material
 		GGX
 	};
 
+	enum class D
+	{
+		Lambertian,
+		OrenNayer
+	};
+
 public:
 	PBR();
 
@@ -35,9 +41,11 @@ private:
 	NDF ndf;
 	F f;
 	G g;
+	D d;
 
 	static const std::vector<std::string> ndfStrings;
 	static const std::vector<std::string> fStrings;
 	static const std::vector<std::string> gStrings;
+	static const std::vector<std::string> dStrings;
 
 };

@@ -1,6 +1,7 @@
 #include pbr_NDF.cgin
 #include pbr_G.cgin
 #include pbr_F.cgin
+#include pbr_Diffuse.cgin
 
 float RadicalInverseOfVanDerCorputSequence(uint bits) 
 {
@@ -87,5 +88,14 @@ vec3 FresnelFunction(int index, vec3 F0, vec3 viewDir, vec3 halfDir)
 	switch (index)
 	{
 		case 0: return FresnelSchlickApproximation(F0, viewDir, halfDir);
+	}
+}
+
+vec3 DiffuseFunction(int index, vec3 albedo, vec3 normal, vec3 viewDir, vec3 lightDir, float roughness)
+{
+	switch (index)
+	{
+		case 0: return LambertianDiffuse(albedo);
+		case 1: return OrenNayarDiffuse(albedo, normal, viewDir, lightDir, roughness);
 	}
 }

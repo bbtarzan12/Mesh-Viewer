@@ -177,6 +177,9 @@
     <None Include="Shaders\pbr_F.cgin">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\pbr_Diffuse.cgin">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Camera.h">

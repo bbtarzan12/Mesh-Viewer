@@ -1,0 +1,21 @@
+
+vec3 LambertianDiffuse(vec3 albedo)
+{
+	return albedo / PI;
+}
+
+vec3 OrenNayarDiffuse(vec3 albedo, vec3 normal, vec3 viewDir, vec3 lightDir, float roughness)
+{
+	float sigma2 = roughness * roughness;
+	float NdotL = saturate(dot(normal, lightDir));
+	float NdotV = saturate(dot(normal, viewDir));
+
+	vec3 lambert = albedo / PI;
+	float A = 1.0 - (sigma2 / (sigma2 + 0.33)) * 0.5;
+	float B = 0.45 * sigma2 / (sigma2 + 0.09);
+	float alpha = max(acos(NdotL), acos(NdotV));
+	float beta = min(acos(NdotL), acos(NdotV));
+	float gamma = max(0, dot(viewDir - normal * NdotV, lightDir - normal * NdotL));
+
+	return lambert * (A + B * gamma * sin(alpha) * tan(beta));
+}

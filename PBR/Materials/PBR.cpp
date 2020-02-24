@@ -5,6 +5,7 @@
 PBR::PBR()	:	
 	uvScale(1, 1),
 	uvOffset(0, 0),
+	d(D::OrenNayer),
 	ndf(NDF::TrowbridgeReitz),
 	g(G::SchlickGGX),
 	f(F::SchlickApproximation),
@@ -28,6 +29,7 @@ void PBR::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& p
 	Material::Draw(model, view, projection);
 	glDepthFunc(GL_LESS);
 
+	SetInt("dIndex", static_cast<int>(d));
 	SetInt("ndfIndex", static_cast<int>(ndf));
 	SetInt("gIndex", static_cast<int>(g));
 	SetInt("fIndex", static_cast<int>(f));
@@ -47,6 +49,10 @@ void PBR::DrawUI()
 	ImGui::Text("UV Scale");
 	ImGui::SameLine();
 	ImGui::DragFloat2("##UV Scale", &uvScale[0], 0.1f);
+
+	ImGui::Text("Diffuse");
+	ImGui::SameLine();
+	ImGui::Combo("##Diffuse", reinterpret_cast<int*>(&d), dStrings);
 
 	ImGui::Text("NDF");
 	ImGui::SameLine();
@@ -100,3 +106,4 @@ void PBR::DrawUI()
 const std::vector<std::string> PBR::ndfStrings{ "BlinnPhong", "Beckmann", "TrowbridgeReitz" };
 const std::vector<std::string> PBR::fStrings{ "SchlickApproximation" };
 const std::vector<std::string> PBR::gStrings{ "SchlickGGX", "GGX" };
+const std::vector<std::string> PBR::dStrings{ "Lambertian", "OrenNayer" };

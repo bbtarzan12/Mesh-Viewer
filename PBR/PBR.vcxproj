@@ -177,6 +177,7 @@
     <None Include="Shaders\cubeMap_frag.glsl" />
     <None Include="Shaders\cubeMap_vert.glsl" />
     <None Include="Shaders\pbr.cgin" />
+    <None Include="Shaders\pbr_Diffuse.cgin" />
     <None Include="Shaders\pbr_F.cgin" />
     <None Include="Shaders\pbr_frag.glsl" />
     <None Include="Shaders\pbr_G.cgin" />
