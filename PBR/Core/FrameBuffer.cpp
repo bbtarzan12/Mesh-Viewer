@@ -3,7 +3,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include "../Util/DrawHelper.h"
 #include "../Textures/CubeMapTexture.h"
-#include "../Materials/CubeMapCapture.h"
+#include "../Materials/IrradianceMapCapture.h"
 
 FrameBuffer::FrameBuffer(const glm::ivec2& size)
 	:size(size)
@@ -24,82 +24,22 @@ FrameBuffer::~FrameBuffer()
 	glDeleteRenderbuffers(1, &rbo);
 }
 
-void FrameBuffer::Capture(const std::shared_ptr<Texture>& destination, const std::shared_ptr<Material>& material)
+void FrameBuffer::Capture(const std::shared_ptr<Texture>& destination, const std::shared_ptr<Material>& material, const int maxMip)
 {
-	const int& destID = destination->GetID();
-
-	material->Use();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	Resize(destination->GetSize());
-	glDisable(GL_CULL_FACE);
-	glm::mat4 empty(0);
-	material->Draw(empty, empty, empty);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, destID, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	DrawHelper::DrawQuad();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glEnable(GL_CULL_FACE);
+	if (std::shared_ptr<CubeMapTexture> cubeMapTexture = std::dynamic_pointer_cast<CubeMapTexture>(destination))
+	{
+		CaptureCubeMapTexture(cubeMapTexture, material, maxMip);
+	}
+	else
+	{
+		CaptureTexture(destination, material, maxMip);
+	}
 }
 
-void FrameBuffer::CaptureIrradianceMap(const std::shared_ptr<CubeMapTexture>& source, const std::shared_ptr<CubeMapTexture>& destination, const std::shared_ptr<CubeMapCapture>& cubeMapCapture)
+void FrameBuffer::Capture(const std::shared_ptr<Texture>& source, const std::shared_ptr<Texture>& destination, const std::shared_ptr<Material>& material, const int maxMip)
 {
-	const int& sourceID = source->GetID();
-	const int& destID = destination->GetID();
-
-	cubeMapCapture->SetTexture("cubeMapTexture", source);
-	cubeMapCapture->Use();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	Resize({ size.x, size.y });
-	glDisable(GL_CULL_FACE);
-	glm::mat4 model(1.0f);
-	for (int i = 0; i < 6; i++)
-	{
-		cubeMapCapture->Draw(model, cubeMapCaptureViews[i], captureProjection);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, destID, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		DrawHelper::DrawCube();
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glEnable(GL_CULL_FACE);
-}
-
-void FrameBuffer::CapturePreFilterMap(const std::shared_ptr<CubeMapTexture>& source, const std::shared_ptr<CubeMapTexture>& destination, const std::shared_ptr<CubeMapCapture>& cubeMapCapture, const int maxMipLevel)
-{
-	const int& sourceID = source->GetID();
-	const int& destID = destination->GetID();
-
-	cubeMapCapture->SetTexture("cubeMapTexture", source);
-	cubeMapCapture->Use();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	glDisable(GL_CULL_FACE);
-	glm::mat4 model(1.0f);
-
-	for (int mip = 0; mip < maxMipLevel; mip++)
-	{
-		int mipWidth = destination->GetSize().x * std::pow(0.5, mip);
-		int mipHeight = destination->GetSize().y * std::pow(0.5, mip);
-		Resize({ mipWidth, mipHeight });
-
-		float roughness = mip / (float)(maxMipLevel - 1);
-		cubeMapCapture->SetFloat("roughness", roughness);
-		for (int i = 0; i < 6; i++)
-		{
-			cubeMapCapture->Draw(model, cubeMapCaptureViews[i], captureProjection);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, destID, mip);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			DrawHelper::DrawCube();
-		}
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glEnable(GL_CULL_FACE);
+	material->SetCaptureTexture(source);
+	Capture(destination, material, maxMip);
 }
 
 void FrameBuffer::Resize(const glm::ivec2& size)
@@ -108,6 +48,61 @@ void FrameBuffer::Resize(const glm::ivec2& size)
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size.x, size.y);
 	glViewport(0, 0, size.x, size.y);
 	this->size = size;
+}
+
+void FrameBuffer::CaptureTexture(const std::shared_ptr<Texture>& destination, const std::shared_ptr<Material>& material, const int maxMip)
+{
+	const int& destID = destination->GetID();
+
+	material->Use();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	const glm::ivec2& size = destination->GetSize();
+	glDisable(GL_CULL_FACE);
+	glm::mat4 empty(0);
+	
+	for (int mip = 0; mip < maxMip; mip++)
+	{
+		glm::ivec2 mipSize = size;
+		material->Capture(mipSize, mip, maxMip);
+		Resize(mipSize);
+		material->Draw(empty, empty, empty);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, destID, mip);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		DrawHelper::DrawQuad();
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glEnable(GL_CULL_FACE);
+}
+
+void FrameBuffer::CaptureCubeMapTexture(const std::shared_ptr<CubeMapTexture>& destination, const std::shared_ptr<Material>& material, const int maxMip)
+{
+	const int& destID = destination->GetID();
+
+	material->Use();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	const glm::ivec2& size = destination->GetSize();
+	glDisable(GL_CULL_FACE);
+	glm::mat4 model(1.0f);
+	for (int mip = 0; mip < maxMip; mip++)
+	{
+		glm::ivec2 mipSize = size;
+		material->Capture(mipSize, mip, maxMip);
+		Resize(mipSize);
+		for (int i = 0; i < 6; i++)
+		{
+			material->Draw(model, cubeMapCaptureViews[i], captureProjection);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, destID, mip);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			DrawHelper::DrawCube();
+		}
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glEnable(GL_CULL_FACE);
 }
 
 glm::mat4 FrameBuffer::captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);

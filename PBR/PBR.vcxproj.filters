@@ -115,10 +115,13 @@
     <ClCompile Include="Util\DrawHelper.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="Materials\CubeMapCapture.cpp">
+    <ClCompile Include="Materials\BRDFMapCapture.cpp">
       <Filter>Materials</Filter>
     </ClCompile>
-    <ClCompile Include="Materials\BRDFMapCapture.cpp">
+    <ClCompile Include="Materials\IrradianceMapCapture.cpp">
+      <Filter>Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\PreFilterMapCapture.cpp">
       <Filter>Materials</Filter>
     </ClCompile>
   </ItemGroup>
@@ -245,10 +248,13 @@
     <ClInclude Include="Util\DrawHelper.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="Materials\CubeMapCapture.h">
+    <ClInclude Include="Materials\BRDFMapCapture.h">
       <Filter>Materials</Filter>
     </ClInclude>
-    <ClInclude Include="Materials\BRDFMapCapture.h">
+    <ClInclude Include="Materials\IrradianceMapCapture.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\PreFilterMapCapture.h">
       <Filter>Materials</Filter>
     </ClInclude>
   </ItemGroup>

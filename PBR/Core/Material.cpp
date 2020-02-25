@@ -30,6 +30,11 @@ void Material::DrawUI()
 
 }
 
+void Material::SetCaptureTexture(const std::shared_ptr<Texture>& texture)
+{
+
+}
+
 void Material::SetShader(const std::string& vertShader, const std::string& fragShader)
 {
 	shader = ShaderLoader::Load(vertShader, fragShader);
@@ -207,6 +212,11 @@ void Material::AttachTextures() const
 
 		SetVec4(textureNames[i] + ".defaultColor", defaultColors[i]);
 	}
+}
+
+void Material::Capture(glm::ivec2& size, const int mip, const int maxMip) const
+{
+	
 }
 
 bool Material::DrawTexturePannel(const std::string& name, const glm::vec2& size)

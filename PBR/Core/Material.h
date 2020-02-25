@@ -20,6 +20,9 @@ public:
 	virtual void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) const;
 	virtual void DrawUI();
 
+	virtual void SetCaptureTexture(const std::shared_ptr<Texture>& texture);
+	virtual void Capture(glm::ivec2& size, const int mip, const int maxMip) const;
+
 	void SetShader(const std::string& vertShader, const std::string& fragShader);
 	void SetInt(const std::string& name, const int value) const;
 	void SetVec2(const std::string& name, const glm::vec2& value) const;

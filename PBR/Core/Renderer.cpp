@@ -7,8 +7,9 @@
 #include "../Materials/CubeMap.h"
 #include "../Materials/Phong.h"
 #include "../Materials/PBR.h"
-#include "../Materials/CubeMapCapture.h"
+#include "../Materials/IrradianceMapCapture.h"
 #include "../Materials/BRDFMapCapture.h"
+#include "../Materials/PreFilterMapCapture.h"
 #include "../Util/TextureLoader.h"
 #include "FrameBuffer.h"
 #include "Texture.h"
@@ -71,15 +72,13 @@ void Renderer::Init()
 	TextureManager::Instance().CreateTexture<CubeMapTexture>("PreFilterMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 128, 128 }, true);
 	TextureManager::Instance().CreateTexture<Texture>("BRDFMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 512, 512 });
 
-	std::shared_ptr<CubeMapCapture> cubeMapCaptureMaterial = MaterialManager::Instance().CreateMaterial<CubeMapCapture>("CubeMapCapture");
+	std::shared_ptr<IrradianceMapCapture> irradianceMapCaptrueMaterial = MaterialManager::Instance().CreateMaterial<IrradianceMapCapture>("IrradianceMapCapture");
+	std::shared_ptr<PreFilterMapCapture> preFilterMapCaptureMaterial = MaterialManager::Instance().CreateMaterial<PreFilterMapCapture>("PreFilterMapCapture");
 	std::shared_ptr<BRDFMapCapture> brdfMapCaptureMaterial = MaterialManager::Instance().CreateMaterial<BRDFMapCapture>("BRDFMapCapture");
 
-	FrameBuffer frameBuffer({ 32, 32 });
-	frameBuffer.CaptureIrradianceMap(TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"), TextureManager::Instance().GetTexture<CubeMapTexture>("IrradianceMap"), cubeMapCaptureMaterial);
-
-	cubeMapCaptureMaterial->SetShader("Shaders/capturePreFilterSpecularMap_vert.glsl", "Shaders/capturePreFilterSpecularMap_frag.glsl");
-	frameBuffer.CapturePreFilterMap(TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"), TextureManager::Instance().GetTexture<CubeMapTexture>("PreFilterMap"), cubeMapCaptureMaterial, 5);
-
+	FrameBuffer frameBuffer;
+	frameBuffer.Capture(TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"), TextureManager::Instance().GetTexture<CubeMapTexture>("IrradianceMap"), irradianceMapCaptrueMaterial);
+	frameBuffer.Capture(TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"), TextureManager::Instance().GetTexture<CubeMapTexture>("PreFilterMap"), preFilterMapCaptureMaterial, 5);
 	frameBuffer.Capture(TextureManager::Instance().GetTexture<Texture>("BRDFMap"), brdfMapCaptureMaterial);
 
 	TextureManager::Instance().LoadTexture<Texture>("Stone_Diffuse", "Images/Stone_02_COLOR.png", true);
@@ -113,7 +112,7 @@ void Renderer::Init()
 	//pbrMaterial->SetTexture("roughnessTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Roughness"));
 	//pbrMaterial->SetTexture("aoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_AO"));
 
-	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(0, -1, 0), glm::vec3(1, 1, 1), 1.0f);
+	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(-1, -1, -1), glm::vec3(1, 1, 1), 1.0f);
 	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(100, 0, 100), glm::vec3(1, 1, 1), 1000.0f);
 	std::shared_ptr<PointLight> light2 = std::make_shared<PointLight>(glm::vec3(0, 100, 100), glm::vec3(1, 1, 1), 1000.0f);
 	std::shared_ptr<PointLight> light3 = std::make_shared<PointLight>(glm::vec3(100, 100, 100), glm::vec3(1, 1, 1), 1000.0f);

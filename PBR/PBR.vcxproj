@@ -157,9 +157,10 @@
     <ClCompile Include="Managers\TextureManager.cpp" />
     <ClCompile Include="Materials\BRDFMapCapture.cpp" />
     <ClCompile Include="Materials\CubeMap.cpp" />
-    <ClCompile Include="Materials\CubeMapCapture.cpp" />
+    <ClCompile Include="Materials\IrradianceMapCapture.cpp" />
     <ClCompile Include="Materials\PBR.cpp" />
     <ClCompile Include="Materials\Phong.cpp" />
+    <ClCompile Include="Materials\PreFilterMapCapture.cpp" />
     <ClCompile Include="Textures\CubeMapTexture.cpp" />
     <ClCompile Include="Util\DrawHelper.cpp" />
     <ClCompile Include="Util\MeshLoader.cpp" />
@@ -203,9 +204,10 @@
     <ClInclude Include="Managers\TextureManager.h" />
     <ClInclude Include="Materials\BRDFMapCapture.h" />
     <ClInclude Include="Materials\CubeMap.h" />
-    <ClInclude Include="Materials\CubeMapCapture.h" />
+    <ClInclude Include="Materials\IrradianceMapCapture.h" />
     <ClInclude Include="Materials\PBR.h" />
     <ClInclude Include="Materials\Phong.h" />
+    <ClInclude Include="Materials\PreFilterMapCapture.h" />
     <ClInclude Include="Textures\CubeMapTexture.h" />
     <ClInclude Include="Util\DrawHelper.h" />
     <ClInclude Include="Util\MeshLoader.h" />
