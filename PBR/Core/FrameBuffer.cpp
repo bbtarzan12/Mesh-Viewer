@@ -34,6 +34,8 @@ void FrameBuffer::Capture(const std::shared_ptr<Texture>& destination, const std
 	{
 		CaptureTexture(destination, material, maxMip);
 	}
+
+	assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 }
 
 void FrameBuffer::Capture(const std::shared_ptr<Texture>& source, const std::shared_ptr<Texture>& destination, const std::shared_ptr<Material>& material, const int maxMip)

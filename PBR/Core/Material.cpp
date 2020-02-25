@@ -206,7 +206,7 @@ void Material::AttachTextures() const
 		}
 		else
 		{
-			glBindTexture(textures.at(textureNames[i])->GetType(), textureID);
+			glBindTexture(textures.at(textureNames[i])->GetTarget(), textureID);
 			SetBool(textureNames[i] + ".use", true);
 		}
 
@@ -257,7 +257,7 @@ bool Material::DrawTexturePannel(const std::string& name, const glm::vec2& size)
 		{
 			const std::string& filePathName = fileDialog->GetSelected().string();
 			const std::string& fileName = fileDialog->GetSelected().filename().string();
-			SetTexture(name, TextureManager::Instance().LoadTexture<Texture>(fileName, filePathName));
+			SetTexture(name, TextureManager::Instance().LoadTexture<Texture>(fileName, filePathName)); // #Todo : 파라미터 정리하기
 			fileDialog->ClearSelected();
 		}
 		return false;

@@ -3,28 +3,36 @@
 
 #include <FreeImage/FreeImage.h>
 
-void TextureLoader::Load(const std::string& filePath, GLuint& id, glm::ivec2& size, GLenum& type, const bool sRGB)
+void TextureLoader::Load(const std::string& filePath, GLuint& id, glm::ivec2& size, GLenum& target, const GLenum internalFormat, const GLenum format, const GLenum type, const bool generateMipMap)
 {
 	FIBITMAP* image = LoadImage(filePath, size);
 
-	GLenum format = sRGB ? GL_SRGB : GL_RGB;
 
-	type = GL_TEXTURE_2D;
+	target = GL_TEXTURE_2D;
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, size.x, size.y, 0, format, type, FreeImage_GetBits(image));
+
+	if (generateMipMap)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
 
 	UnloadImage(image);
 }
 
-void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id, glm::ivec2& size, GLenum& type, const bool sRGB)
+void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id, glm::ivec2& size, GLenum& target, const GLenum internalFormat, const GLenum format, const GLenum type, const bool generateMipMap)
 {
-	type = GL_TEXTURE_CUBE_MAP;
-	GLenum format = sRGB ? GL_SRGB : GL_RGB;
+	target = GL_TEXTURE_CUBE_MAP;
 
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
@@ -34,22 +42,32 @@ void TextureLoader::Load(const std::vector<std::string>& facesPath, GLuint& id, 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
+	if (generateMipMap)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+
 	for (int i = 0; i < facesPath.size(); i++)
 	{
 		FIBITMAP* image = LoadImage(facesPath[i], size);
 		FreeImage_FlipHorizontal(image);
 		FreeImage_FlipVertical(image);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, size.x, size.y, 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, size.x, size.y, 0, format, type, FreeImage_GetBits(image));
 		UnloadImage(image);
 	}
 }
 
-void TextureLoader::Create(GLenum& type, const GLenum& internalformat, const GLenum& dataType, GLuint& id, const glm::ivec2& size, const bool generateMipMap)
+void TextureLoader::Create(GLuint& id, const glm::ivec2& size, GLenum& target, const GLenum internalFormat, const GLenum format, const GLenum type, const bool generateMipMap)
 {
-	type = GL_TEXTURE_2D;
+	target = GL_TEXTURE_2D;
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalformat, size.x, size.y, 0, GL_RGB, dataType, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, size.x, size.y, 0, format, type, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -65,9 +83,9 @@ void TextureLoader::Create(GLenum& type, const GLenum& internalformat, const GLe
 	}
 }
 
-void TextureLoader::CreateCubeMap(GLenum& type, const GLenum& internalformat, const GLenum& dataType, GLuint& id, const glm::ivec2& size, const bool generateMipMap)
+void TextureLoader::CreateCubeMap(GLuint& id, const glm::ivec2& size, GLenum& target, const GLenum internalFormat, const GLenum format, const GLenum type, const bool generateMipMap)
 {
-	type = GL_TEXTURE_CUBE_MAP;
+	target = GL_TEXTURE_CUBE_MAP;
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -86,7 +104,7 @@ void TextureLoader::CreateCubeMap(GLenum& type, const GLenum& internalformat, co
 
 	for (int i = 0; i < 6; i++)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalformat, size.x, size.y, 0, GL_RGB, dataType, nullptr);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, size.x, size.y, 0, format, type, nullptr);
 		if (generateMipMap)
 		{
 			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

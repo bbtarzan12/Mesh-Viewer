@@ -67,10 +67,11 @@ void Renderer::Init()
 		"Images/Environment/nz.png"
 	};
 
-	TextureManager::Instance().LoadTexture<CubeMapTexture>("CubeMap", faces, true);
-	TextureManager::Instance().CreateTexture<CubeMapTexture>("IrradianceMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 32, 32 }, true);
-	TextureManager::Instance().CreateTexture<CubeMapTexture>("PreFilterMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 128, 128 }, true);
-	TextureManager::Instance().CreateTexture<Texture>("BRDFMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 512, 512 });
+	TextureManager::Instance().LoadTexture<CubeMapTexture>("CubeMap", faces, GL_SRGB);
+	TextureManager::Instance().CreateTexture<CubeMapTexture>("IrradianceMap", glm::ivec2{ 32, 32 }, GL_RGB16F, GL_RGB, GL_FLOAT, true);
+	TextureManager::Instance().CreateTexture<CubeMapTexture>("PreFilterMap", glm::ivec2{ 128, 128 }, GL_RGB16F, GL_RGB, GL_FLOAT, true);
+	TextureManager::Instance().CreateTexture<Texture>("BRDFMap", glm::ivec2{ 512, 512 }, GL_RGB16F, GL_RGB, GL_FLOAT);
+
 
 	std::shared_ptr<IrradianceMapCapture> irradianceMapCaptrueMaterial = MaterialManager::Instance().CreateMaterial<IrradianceMapCapture>("IrradianceMapCapture");
 	std::shared_ptr<PreFilterMapCapture> preFilterMapCaptureMaterial = MaterialManager::Instance().CreateMaterial<PreFilterMapCapture>("PreFilterMapCapture");
@@ -81,10 +82,10 @@ void Renderer::Init()
 	frameBuffer.Capture(TextureManager::Instance().GetTexture<CubeMapTexture>("CubeMap"), TextureManager::Instance().GetTexture<CubeMapTexture>("PreFilterMap"), preFilterMapCaptureMaterial, 5);
 	frameBuffer.Capture(TextureManager::Instance().GetTexture<Texture>("BRDFMap"), brdfMapCaptureMaterial);
 
-	TextureManager::Instance().LoadTexture<Texture>("Stone_Diffuse", "Images/Stone_02_COLOR.png", true);
+	TextureManager::Instance().LoadTexture<Texture>("Stone_Diffuse", "Images/Stone_02_COLOR.png", GL_SRGB);
 	TextureManager::Instance().LoadTexture<Texture>("Stone_Normal", "Images/Stone_02_NRM.png");
 	TextureManager::Instance().LoadTexture<Texture>("Stone_Specular", "Images/Stone_02_SPEC.png");
-	TextureManager::Instance().LoadTexture<Texture>("Metal_Albedo", "Images/chipped-paint-metal-albedo.png", true);
+	TextureManager::Instance().LoadTexture<Texture>("Metal_Albedo", "Images/chipped-paint-metal-albedo.png", GL_SRGB);
 	TextureManager::Instance().LoadTexture<Texture>("Metal_Normal", "Images/chipped-paint-metal-normal-dx.png");
 	TextureManager::Instance().LoadTexture<Texture>("Metal_Metallic", "Images/chipped-paint-metal-metal.png");
 	TextureManager::Instance().LoadTexture<Texture>("Metal_Roughness", "Images/chipped-paint-metal-rough2.png");
@@ -106,11 +107,11 @@ void Renderer::Init()
 	pbrMaterial->SetTexture("irradianceMapTexture", TextureManager::Instance().GetTexture<Texture>("IrradianceMap"));
 	pbrMaterial->SetTexture("preFilterSpecularMapTexture", TextureManager::Instance().GetTexture<Texture>("PreFilterMap"));
 	pbrMaterial->SetTexture("brdfSpecularMapTexture", TextureManager::Instance().GetTexture<Texture>("BRDFMap"));
-	//pbrMaterial->SetTexture("albedoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Albedo"));
-	//pbrMaterial->SetTexture("normalTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Normal"));
-	//pbrMaterial->SetTexture("metallicTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Metallic"));
-	//pbrMaterial->SetTexture("roughnessTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Roughness"));
-	//pbrMaterial->SetTexture("aoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_AO"));
+	pbrMaterial->SetTexture("albedoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Albedo"));
+	pbrMaterial->SetTexture("normalTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Normal"));
+	pbrMaterial->SetTexture("metallicTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Metallic"));
+	pbrMaterial->SetTexture("roughnessTexture", TextureManager::Instance().GetTexture<Texture>("Metal_Roughness"));
+	pbrMaterial->SetTexture("aoTexture", TextureManager::Instance().GetTexture<Texture>("Metal_AO"));
 
 	std::shared_ptr<DirectionalLight> directionalLight = std::make_shared<DirectionalLight>(glm::vec3(-1, -1, -1), glm::vec3(1, 1, 1), 1.0f);
 	std::shared_ptr<PointLight> light = std::make_shared<PointLight>(glm::vec3(100, 0, 100), glm::vec3(1, 1, 1), 1000.0f);
