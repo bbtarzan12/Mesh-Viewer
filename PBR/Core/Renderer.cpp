@@ -68,7 +68,7 @@ void Renderer::Init()
 	};
 
 	TextureManager::Instance().LoadTexture<CubeMapTexture>("CubeMap", faces, true);
-	TextureManager::Instance().CreateTexture<CubeMapTexture>("IrradianceMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 32, 32 });
+	TextureManager::Instance().CreateTexture<CubeMapTexture>("IrradianceMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 32, 32 }, true);
 	TextureManager::Instance().CreateTexture<CubeMapTexture>("PreFilterMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 128, 128 }, true);
 	TextureManager::Instance().CreateTexture<Texture>("BRDFMap", GL_RGB16F, GL_FLOAT, glm::ivec2{ 512, 512 });
 
