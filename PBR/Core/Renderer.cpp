@@ -202,6 +202,12 @@ void Renderer::RenderUI(double deltaTime)
 		{
 			bEnableMaterialWindow = !bEnableMaterialWindow;
 		}
+
+		if (ImGui::MenuItem("Textures"))
+		{
+			TextureManager::Instance().ToggleTexturesWindow();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 
@@ -220,6 +226,7 @@ void Renderer::RenderUI(double deltaTime)
 		RenderMeshLoadWindow(deltaTime);
 	}
 
+	TextureManager::Instance().RenderTexturesWindow(deltaTime);
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -247,7 +254,7 @@ void Renderer::RenderMeshesWindow(double deltaTime)
 
 	if (meshes.empty())
 	{
-		ImGui::TextDisabled("meshes.size() == 0");
+		ImGui::TextDisabled("meshes.empty()");
 		ImGui::End();
 		return;
 	}

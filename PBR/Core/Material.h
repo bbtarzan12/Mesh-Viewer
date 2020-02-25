@@ -37,8 +37,8 @@ public:
 
 	bool Visible() const;
 
-	glm::ivec2 GetTextureSize(const std::string& name) const;
 	GLuint GetTextureID(const std::string& name) const;
+	GLenum GetTarget(const std::string& name) const;
 
 protected:
 
@@ -56,13 +56,13 @@ private:
 protected:
 	GLuint shader = 0;
 
-	std::map<std::string, std::shared_ptr<Texture>> textures;
+	mutable std::map<std::string, std::weak_ptr<Texture>> textures;
 	std::vector<std::string> textureNames;
 	std::vector<glm::vec4> defaultColors;
 
 private:
 
 	//UI
-	std::shared_ptr<ImGui::FileBrowser> fileDialog;
+	//std::shared_ptr<ImGui::FileBrowser> fileDialog;
 	bool bVisible;
 };

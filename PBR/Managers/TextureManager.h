@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <cassert>
 #include "../Core/SingletonManager.h"
+#include <functional>
 
 class TextureManager : public SingletonManager<TextureManager>
 {
@@ -22,12 +23,19 @@ public:
 	template<typename T>
 	std::shared_ptr<T> GetTexture(const std::string& name);
 
+	void ToggleTexturesWindow();
+	void RenderTexturesWindow(double deltaTime);
+	void OpenTexturesWindowForLoad(const std::function<void(const std::string&)>& func);
+
 private:
 	TextureManager() = default;
 	virtual ~TextureManager() = default;
 
 private:
 	std::map<std::string, std::shared_ptr<Texture>> textures;
+	std::function<void(const std::string&)> callback;
+	bool bEnableTexturesWindow = false;
+	bool bTextureSelectMode = false;
 };
 
 template<typename T, typename... Types>

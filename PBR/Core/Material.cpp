@@ -6,7 +6,7 @@
 #include "../Managers/TextureManager.h"
 
 Material::Material(const std::string& vertShader, const std::string& fragShader, const std::vector<std::string>& textureNames, bool bVisible)
-	:textureNames(textureNames), fileDialog(std::make_shared<ImGui::FileBrowser>()), bVisible(bVisible)
+	:textureNames(textureNames), bVisible(bVisible)
 {
 	SetShader(vertShader, fragShader);
 	InitializeTextures();
@@ -151,9 +151,6 @@ void Material::SetDefaultColor(const std::string& name, const glm::vec4& value)
 
 void Material::SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture)
 {
-	if (texture == nullptr)
-		return;
-
 	textures[name] = texture;
 }
 
@@ -162,20 +159,40 @@ bool Material::Visible() const
 	return bVisible;
 }
 
-glm::ivec2 Material::GetTextureSize(const std::string& name) const
-{
-	if (textures.find(name) == textures.end())
-		return {0, 0};
-
-	return textures.at(name)->GetSize();
-}
-
 GLuint Material::GetTextureID(const std::string& name) const
 {
 	if (textures.find(name) == textures.end())
 		return 0;
 
-	return textures.at(name)->GetID();
+	std::shared_ptr<Texture> texture = textures.at(name).lock();
+
+	if (texture)
+	{
+		return texture->GetID();
+	}
+	else
+	{
+		textures.erase(name);
+		return 0;
+	}
+}
+
+GLenum Material::GetTarget(const std::string& name) const
+{
+	if (textures.find(name) == textures.end())
+		return 0;
+
+	std::shared_ptr<Texture> texture = textures.at(name).lock();
+
+	if (texture)
+	{
+		return texture->GetTarget();
+	}
+	else
+	{
+		textures.erase(name);
+		return 0;
+	}
 }
 
 void Material::InitializeTextures()
@@ -206,7 +223,7 @@ void Material::AttachTextures() const
 		}
 		else
 		{
-			glBindTexture(textures.at(textureNames[i])->GetTarget(), textureID);
+			glBindTexture(GetTarget(textureNames[i]), textureID);
 			SetBool(textureNames[i] + ".use", true);
 		}
 
@@ -247,18 +264,13 @@ bool Material::DrawTexturePannel(const std::string& name, const glm::vec2& size)
 		ImGui::SameLine();
 		if (ImGui::Button("Load"))
 		{
-			fileDialog->SetTitle("Load " + name);
-			fileDialog->SetTypeFilters({ ".png", ".jpg", ".bmp" });
-			fileDialog->Open();
-		}
-
-		fileDialog->Display();
-		if (fileDialog->HasSelected())
-		{
-			const std::string& filePathName = fileDialog->GetSelected().string();
-			const std::string& fileName = fileDialog->GetSelected().filename().string();
-			SetTexture(name, TextureManager::Instance().LoadTexture<Texture>(fileName, filePathName)); // #Todo : 파라미터 정리하기
-			fileDialog->ClearSelected();
+			TextureManager::Instance().OpenTexturesWindowForLoad
+			(
+				[=](const std::string& selectedTextureName)
+			{
+				SetTexture(name, TextureManager::Instance().GetTexture<Texture>(selectedTextureName));
+			}
+			);
 		}
 		return false;
 	}
